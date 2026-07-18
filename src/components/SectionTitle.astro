@@ -1,0 +1,9 @@
+---
+const { number, label } = Astro.props
+---
+
+<p class="reveal flex items-baseline gap-3 font-mono uppercase tracking-widest mb-12">
+  <span class="text-accent font-bold">{number}</span>
+  <span class="text-ink-soft text-sm">// {label}</span>
+  <span class="spin-slow text-accent text-sm" aria-hidden="true">✱</span>
+</p>

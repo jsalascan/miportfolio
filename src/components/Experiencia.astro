@@ -1,0 +1,60 @@
+---
+import { experience } from "../data/experience"
+import SectionTitle from "./SectionTitle.astro"
+import Monigote from "./Monigote.astro"
+---
+
+<section id="experiencia" class="py-24 border-t-2 border-edge">
+  <div class="max-w-5xl mx-auto px-6">
+
+    <SectionTitle number="03" label="Experiencia" />
+
+    <!-- Línea de tiempo: cinta transportadora -->
+    <div class="relative">
+
+      <!-- Cinta en movimiento -->
+      <div class="belt-line absolute left-0 top-2 bottom-2 w-1.5 rounded-full -translate-x-[2px]"></div>
+
+      <!-- Items -->
+      <div class="space-y-12">
+        {experience.map((item, i) => (
+          <div class={`reveal reveal-delay-${Math.min(i + 1, 4)} relative pl-8`}>
+
+            <!-- Punto en la línea -->
+            <div class="absolute left-0 top-2 w-2.5 h-2.5 rounded-full bg-accent outline-4 outline-paper -translate-x-[calc(50%-1px)]"></div>
+
+            <!-- Cabecera -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
+              <div>
+                <h3 class="font-black text-lg">{item.role}</h3>
+                <p class="text-sm font-bold text-ink-soft">{item.company}</p>
+              </div>
+              <span class="font-mono text-xs uppercase text-ink-soft shrink-0">{item.period}</span>
+            </div>
+
+            <!-- Descripción -->
+            <p class="text-sm text-ink-soft leading-relaxed mb-3 max-w-2xl">
+              {item.description}
+            </p>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2">
+              {item.tags.map((tag) => (
+                <span class="px-2.5 py-0.5 text-xs font-bold bg-paper-2 border-2 border-edge text-ink rounded-lg">
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+          </div>
+        ))}
+      </div>
+
+      <!-- Robot inspector pasando revista junto a la cinta -->
+      <div class="hidden sm:block absolute -left-28 -bottom-8 w-24 pointer-events-none">
+        <Monigote variant="obrero" class="w-full" />
+      </div>
+
+    </div>
+  </div>
+</section>

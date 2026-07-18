@@ -1,0 +1,51 @@
+---
+import Monigote from "./Monigote.astro"
+---
+
+<!-- Robot colgado de la barra de scroll: tira de ella mientras bajas.
+     Aparece con fade al empezar a scrollear. -->
+<div id="scrollbot-rail" class="hidden lg:block opacity-0 transition-opacity duration-500" aria-hidden="true">
+  <div class="fixed right-[10px] top-20 bottom-4 w-1.5 rounded-full bg-edge opacity-70 z-40 pointer-events-none"></div>
+  <div id="scrollbot" class="fixed right-1 w-12 z-40 pointer-events-none" style="top: 80px">
+    <Monigote variant="scrollbot" class="w-full overflow-visible" />
+  </div>
+</div>
+
+<script>
+  function initScrollBot() {
+    const bot = document.getElementById("scrollbot")
+    const rail = document.getElementById("scrollbot-rail")
+    if (!bot || !rail) return
+
+    const TOP = 80
+    const BOTTOM_PAD = 16
+    const BOT_H = 72
+
+    let timer: ReturnType<typeof setTimeout> | undefined
+
+    function place() {
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      const progress = max > 0 ? Math.min(window.scrollY / max, 1) : 0
+      const range = window.innerHeight - TOP - BOTTOM_PAD - BOT_H
+      bot!.style.top = `${TOP + progress * Math.max(range, 0)}px`
+      rail!.classList.toggle("opacity-0", window.scrollY < 160)
+    }
+
+    place()
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        place()
+        bot!.classList.add("is-pulling")
+        clearTimeout(timer)
+        timer = setTimeout(() => bot!.classList.remove("is-pulling"), 180)
+      },
+      { passive: true }
+    )
+    window.addEventListener("resize", place, { passive: true })
+  }
+
+  initScrollBot()
+  document.addEventListener("astro:page-load", initScrollBot)
+</script>

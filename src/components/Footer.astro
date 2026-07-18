@@ -1,0 +1,43 @@
+---
+import Monigote from "./Monigote.astro"
+
+const year = new Date().getFullYear()
+
+const stack = [
+  { name: "Astro", url: "https://astro.build" },
+  { name: "Tailwind", url: "https://tailwindcss.com" },
+]
+---
+
+<footer class="relative border-t-2 border-edge py-12">
+
+  <!-- Monigote dormido sobre el borde del footer -->
+  <div class="hidden sm:block absolute right-20 -top-[51px] w-24 pointer-events-none">
+    <Monigote variant="sleep" class="w-full" />
+  </div>
+
+  <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+    <p class="text-sm text-ink-soft font-mono">
+      <span class="text-edge">// </span>
+      El mejor código es el que aún no sé escribir.<span class="cursor-blink text-accent">▌</span>
+    </p>
+
+    <p class="text-xs text-ink-soft/70 flex items-center gap-1.5">
+      <span>© {year} Jose Salas · Hecho con</span>
+      {stack.map((tech, i) => (
+        <>
+          <a
+            href={tech.url}
+            target="_blank"
+            class="text-ink-soft hover:text-accent transition-colors underline underline-offset-4"
+          >
+            {tech.name}
+          </a>
+          {i < stack.length - 1 && <span>&</span>}
+        </>
+      ))}
+    </p>
+
+  </div>
+</footer>

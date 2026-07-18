@@ -1,0 +1,40 @@
+---
+const { title, description, tags, url, demo } = Astro.props
+---
+
+<article class="group h-full p-6 bg-paper-2 border-2 border-edge rounded-3xl hover:border-ink hover:-translate-y-1 transition-all">
+
+  <!-- Cabecera -->
+  <div class="flex items-start justify-between gap-4 mb-3">
+    <h3 class="font-black text-lg group-hover:text-accent transition-colors">
+      {title}
+    </h3>
+
+    <!-- Links -->
+    <div class="flex items-center gap-3 shrink-0">
+      {demo && (
+        <a href={demo} target="_blank" class="font-mono text-xs uppercase text-ink-soft hover:text-accent transition-colors">
+          Demo ↗
+        </a>
+      )}
+      <a href={url} target="_blank" class="font-mono text-xs uppercase text-ink-soft hover:text-accent transition-colors">
+        GitHub ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- Descripción -->
+  <p class="text-sm text-ink-soft leading-relaxed mb-4">
+    {description}
+  </p>
+
+  <!-- Tags -->
+  <div class="flex flex-wrap gap-2">
+    {tags.map((tag: string) => (
+      <span class="px-2.5 py-0.5 text-xs font-bold bg-paper border-2 border-edge text-ink rounded-lg">
+        {tag}
+      </span>
+    ))}
+  </div>
+
+</article>

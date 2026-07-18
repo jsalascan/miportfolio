@@ -1,0 +1,112 @@
+---
+import Monigote from "./Monigote.astro"
+
+const data = {
+  nombre: ["Jose", "Salas"],
+  rol: "Desarrollador de Software",
+  descripcion:
+    "Desarrollador de Software y Técnico IT. Apasionado de la tecnología aplicada al sector hotelero: aplicaciones web y móviles que aportan valor real desde el primer día.",
+  linkedin: "https://www.linkedin.com/in/jsalascan/",
+  github: "https://github.com/jsalascan",
+}
+---
+
+<section class="min-h-screen flex flex-col items-center justify-center relative px-6 pt-16 overflow-hidden">
+
+  <!-- Nombre gigante + banner rotado -->
+  <div class="relative w-fit mx-auto mb-12">
+
+    <!-- Monigote flotante: clic para bajar. En móvil vive encima del nombre -->
+    <button
+      data-scroll-next
+      aria-label="Bajar a la siguiente sección"
+      title="¡Dame para bajar!"
+      class="scroll-buddy animate-fade-up block w-20 mx-auto mb-2 md:mb-0 md:w-28 md:absolute md:-left-40 md:-top-8 md:-rotate-6 border-0 bg-transparent p-0"
+      style="animation-delay: 0.6s; opacity: 0; animation-fill-mode: forwards;"
+    >
+      <Monigote variant="float" class="w-full overflow-visible" />
+    </button>
+
+    <h1
+      class="animate-fade-up text-6xl sm:text-8xl lg:text-9xl font-black leading-[1.05] tracking-tight text-center"
+      style="animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards;"
+    >
+      {data.nombre[0]}<br />{data.nombre[1]}
+    </h1>
+
+    <!-- Banner etiqueta: en móvil debajo del nombre, en desktop solapado a la derecha -->
+    <div
+      class="banner-tag relative mx-auto mt-4 w-fit sm:mt-0 sm:mx-0 sm:absolute sm:bottom-0 sm:-right-12 sm:translate-y-2/3 z-10 bg-banner text-white font-mono font-bold uppercase text-sm sm:text-xl px-2.5 py-1 sm:px-3 sm:py-1.5 outline-4 outline-paper"
+    >
+      {data.rol}
+    </div>
+  </div>
+
+  <!-- Descripción -->
+  <p
+    class="animate-fade-up text-base sm:text-lg text-ink-soft leading-relaxed max-w-md text-center mb-10"
+    style="animation-delay: 0.4s; opacity: 0; animation-fill-mode: forwards;"
+  >
+    {data.descripcion}
+  </p>
+
+  <!-- CTAs -->
+  <div
+    class="animate-fade-up flex flex-wrap justify-center gap-2.5 sm:gap-3"
+    style="animation-delay: 0.5s; opacity: 0; animation-fill-mode: forwards;"
+  >
+    <a
+      href="#proyectos"
+      class="px-5 py-2.5 text-xs sm:px-7 sm:py-3 sm:text-sm bg-ink text-paper font-bold rounded-full hover:bg-accent hover:text-white transition-colors text-center"
+    >
+      Ver proyectos
+    </a>
+    <a
+      href={data.linkedin}
+      target="_blank"
+      class="px-5 py-2.5 text-xs sm:px-7 sm:py-3 sm:text-sm border-2 border-edge text-ink font-bold rounded-full hover:border-ink transition-colors text-center"
+    >
+      LinkedIn ↗
+    </a>
+    <a
+      href={data.github}
+      target="_blank"
+      class="px-5 py-2.5 text-xs sm:px-7 sm:py-3 sm:text-sm border-2 border-edge text-ink font-bold rounded-full hover:border-ink transition-colors text-center"
+    >
+      GitHub ↗
+    </a>
+  </div>
+
+  <!-- Indicador scroll -->
+  <div
+    class="animate-fade-up absolute bottom-8 left-1/2 -translate-x-1/2 font-mono text-xs uppercase text-ink-soft"
+    style="animation-delay: 0.8s; opacity: 0; animation-fill-mode: forwards;"
+  >
+    [ scroll <span class="arrow-bob">↓</span> ]
+  </div>
+
+</section>
+
+<script>
+  // Los ojos del monigote siguen al cursor
+  function initEyeFollow() {
+    const eyes = document.querySelector("[data-mono-eyes]") as SVGGElement | null
+    if (!eyes) return
+
+    document.addEventListener("mousemove", (e) => {
+      const rect = eyes.getBoundingClientRect()
+      const cx = rect.left + rect.width / 2
+      const cy = rect.top + rect.height / 2
+      const dx = e.clientX - cx
+      const dy = e.clientY - cy
+      const dist = Math.hypot(dx, dy) || 1
+      const max = 2.5
+      const x = (dx / dist) * Math.min(max, dist / 40)
+      const y = (dy / dist) * Math.min(max, dist / 40)
+      eyes.style.transform = `translate(${x}px, ${y}px)`
+    })
+  }
+
+  initEyeFollow()
+  document.addEventListener("astro:page-load", initEyeFollow)
+</script>

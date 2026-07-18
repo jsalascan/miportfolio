@@ -1,0 +1,59 @@
+---
+import { projects } from "../data/projects"
+import ProjectCard from "./ProjectCard.astro"
+import SectionTitle from "./SectionTitle.astro"
+import Monigote from "./Monigote.astro"
+
+// Separamos featured de los demás
+const featured = projects.filter(p => p.featured)
+const others = projects.filter(p => !p.featured)
+---
+
+<section id="proyectos" class="relative py-24 border-t-2 border-edge">
+
+  <!-- Monigote asomándose por el borde superior -->
+  <div class="hidden md:block absolute left-1/4 -top-[50px] w-24 pointer-events-none">
+    <Monigote variant="peek" class="w-full" />
+  </div>
+
+  <div class="max-w-5xl mx-auto px-6">
+
+    <SectionTitle number="02" label="Proyectos" />
+
+    <!-- Proyectos destacados -->
+    <div class="grid md:grid-cols-2 gap-4 mb-4">
+      {featured.map((project, i) => (
+        <div class={`reveal reveal-delay-${Math.min(i + 1, 4)}`}>
+          <ProjectCard
+          title={project.title}
+          description={project.description}
+          tags={project.tags}
+          url={project.url}
+          demo={project.demo}
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- Otros proyectos -->
+    {others.length > 0 && (
+      <div>
+        <p class="font-mono text-sm uppercase text-ink-soft mb-4 mt-8">Otros proyectos</p>
+        <div class="grid md:grid-cols-3 gap-4">
+          {others.map((project, i) => (
+            <div class={`reveal reveal-delay-${Math.min(i + 1, 4)}`}>
+              <ProjectCard
+                title={project.title}
+                description={project.description}
+                tags={project.tags}
+                url={project.url}
+                demo={project.demo}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </div>
+</section>

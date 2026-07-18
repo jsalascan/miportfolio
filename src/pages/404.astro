@@ -1,0 +1,69 @@
+---
+import Layout from "../layouts/Layout.astro"
+import Navbar from "../components/Navbar.astro"
+import Footer from "../components/Footer.astro"
+import Monigote from "../components/Monigote.astro"
+import { url } from "../utils/url"
+---
+
+<Layout title="404 - Página no encontrada | Jose Salas">
+  <Navbar />
+  <main class="min-h-screen flex items-center pt-24 pb-16 md:pt-16">
+    <div class="max-w-5xl mx-auto px-6 w-full">
+
+      <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+
+        <!-- Número 404 grande + robot caído -->
+        <div
+          class="animate-fade-up select-none text-center md:text-left"
+          style="animation-delay: 0.1s; opacity: 0; animation-fill-mode: forwards;"
+        >
+        <p class="font-black leading-none text-paper-3 tracking-tighter text-[5.5rem] sm:text-[8rem]">
+            404
+        </p>
+        <Monigote variant="fallen" class="w-36 sm:w-44 -mt-4 sm:-mt-6 mx-auto md:mx-0 md:ml-8 overflow-visible" />
+        </div>
+
+        <!-- Texto y CTA -->
+        <div class="text-center md:text-left">
+          <div
+            class="animate-fade-up inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border-2 border-edge bg-paper-2"
+            style="animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards;"
+          >
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="text-sm font-mono uppercase text-ink-soft">Página no encontrada</span>
+          </div>
+
+          <h1
+            class="animate-fade-up text-3xl font-black tracking-tight mb-4"
+            style="animation-delay: 0.3s; opacity: 0; animation-fill-mode: forwards;"
+          >
+            Esto no debería estar aquí.
+          </h1>
+
+          <p
+            class="animate-fade-up text-ink-soft leading-relaxed mb-8"
+            style="animation-delay: 0.4s; opacity: 0; animation-fill-mode: forwards;"
+          >
+            La página que buscas no existe o ha sido movida. Puede que hayas
+            escrito mal la URL o que el enlace esté roto.
+          </p>
+
+          <div
+            class="animate-fade-up flex flex-wrap gap-3 justify-center md:justify-start"
+            style="animation-delay: 0.5s; opacity: 0; animation-fill-mode: forwards;"
+          >
+            <a
+              href={url("")}
+              class="px-5 py-2.5 bg-ink text-paper text-sm font-bold rounded-full hover:bg-accent hover:text-white transition-colors"
+            >
+              Volver al inicio
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

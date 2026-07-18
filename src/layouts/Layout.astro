@@ -1,0 +1,111 @@
+---
+import "../styles/global.css"
+import { ClientRouter } from "astro:transitions"
+import { url } from "../utils/url"
+
+const {
+  title,
+  description = "Portfolio personal de Jose Antonio Salas, Desarrollador de Software y Técnico IT en el sector hotelero. Proyectos, experiencia y formas de contacto.",
+  image = url("og-image.png")
+} = Astro.props
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <!-- SEO básico -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Jose Antonio Salas" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content="Jose Salas — Portfolio" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site)} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href={url("favicon.svg")} />
+
+    <ClientRouter />
+  </head>
+
+  <body class="bg-paper text-ink font-sans antialiased">
+    <slot />
+
+    <!-- Botón volver arriba -->
+    <button
+      id="back-to-top"
+      class="fixed bottom-6 right-6 z-50 inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-mono uppercase bg-paper border-2 border-edge text-ink-soft shadow-sm opacity-0 pointer-events-none transition-all duration-300 hover:border-ink hover:text-ink"
+      aria-label="Volver arriba"
+    >
+      ↑
+    </button>
+
+    <script>
+      import { initReveal } from "../utils/reveal.js"
+      initReveal()
+      document.addEventListener("astro:page-load", initReveal)
+    </script>
+
+    <script>
+      // Monigotes clicables que bajan el scroll a la siguiente sección
+      function initScrollBuddies() {
+        document.querySelectorAll("[data-scroll-next]").forEach((el) => {
+          (el as HTMLElement).onclick = () => {
+            const current = el.closest("section")
+            const sections = Array.from(document.querySelectorAll("main section"))
+            const next = current ? sections[sections.indexOf(current) + 1] : sections[0]
+            if (next) {
+              next.scrollIntoView({ behavior: "smooth" })
+            } else {
+              window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" })
+            }
+          }
+        })
+      }
+
+      initScrollBuddies()
+      document.addEventListener("astro:page-load", initScrollBuddies)
+    </script>
+
+    <script>
+      function initBackToTop() {
+        const btn = document.getElementById("back-to-top") as HTMLButtonElement
+        const footer = document.querySelector("footer") as HTMLElement
+
+        window.addEventListener("scroll", () => {
+          const scrolledEnough = window.scrollY > 400
+          const footerVisible = footer
+            ? window.scrollY + window.innerHeight >= footer.offsetTop
+            : false
+
+          const show = scrolledEnough && !footerVisible
+          btn.classList.toggle("opacity-0", !show)
+          btn.classList.toggle("pointer-events-none", !show)
+          btn.classList.toggle("opacity-100", show)
+        })
+
+        btn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" })
+      }
+
+      initBackToTop()
+      document.addEventListener("astro:page-load", initBackToTop)
+    </script>
+  </body>
+</html>

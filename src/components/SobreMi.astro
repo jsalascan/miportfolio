@@ -1,0 +1,136 @@
+---
+import * as simpleIcons from "simple-icons"
+import SectionTitle from "./SectionTitle.astro"
+import Monigote from "./Monigote.astro"
+
+const skills = [
+  { name: "Kotlin",         icon: simpleIcons.siKotlin },
+  { name: "Java",           icon: simpleIcons.siOpenjdk },
+  { name: "Vue",            icon: simpleIcons.siVuedotjs },
+  { name: "Express",        icon: simpleIcons.siExpress },
+  { name: "Node",           icon: simpleIcons.siNodedotjs },
+  { name: "JavaScript",     icon: simpleIcons.siJavascript },
+  { name: "WordPress",      icon: simpleIcons.siWordpress },
+  { name: "MySQL",          icon: simpleIcons.siMysql },
+  { name: "Git",            icon: simpleIcons.siGit },
+  { name: "GitHub Actions", icon: simpleIcons.siGithubactions },
+  { name: "Tailwind",       icon: simpleIcons.siTailwindcss },
+]
+
+const formacion = [
+  {
+    title: "Grado en Ingeniería Informática",
+    center: "Universitat Oberta de Catalunya",
+    period: "En curso",
+  },
+  {
+    title: "CFGS Desarrollo de Aplicaciones Web",
+    center: "I.E.S. Las Galletas",
+    period: "2024 - 2026",
+  },
+  {
+    title: "CFGM Sistemas Microinformáticos y Redes",
+    center: "I.E.S. Las Galletas",
+    period: "2022 - 2024",
+  },
+]
+
+const idiomas = [
+  { name: "Español", level: "Nativo" },
+  { name: "Inglés", level: "Profesional básico" },
+]
+---
+
+<section id="sobre-mi" class="relative py-24 border-t-2 border-edge">
+
+  <!-- Monigote sentado en el borde superior -->
+  <div class="hidden md:block absolute right-24 -top-[59px] w-20 pointer-events-none">
+    <Monigote variant="sit" class="w-full" />
+  </div>
+
+  <div class="max-w-5xl mx-auto px-6">
+
+    <SectionTitle number="01" label="Sobre mí" />
+
+    <div class="grid md:grid-cols-2 gap-16">
+
+      <!-- Texto -->
+      <div class="reveal reveal-delay-1 space-y-4">
+        <p class="text-3xl font-black leading-snug">
+          Desarrollador de Software y Técnico IT en el sector hotelero.
+        </p>
+        <p class="text-ink-soft leading-relaxed">
+          Cuento con experiencia real en el sector hotelero, habiendo colaborado
+          con dos de las cadenas más destacadas de Canarias:
+          <strong class="text-ink">Spring Hotels Group</strong> y
+          <strong class="text-ink">Bahía Príncipe Hotels &amp; Resorts</strong>.
+        </p>
+        <p class="text-ink-soft leading-relaxed">
+          Mi trayectoria combina el desarrollo de aplicaciones web y móviles con
+          el soporte técnico en entornos de alta exigencia operativa, donde la
+          continuidad del servicio y la experiencia del usuario son prioritarias.
+        </p>
+        <p class="text-ink-soft leading-relaxed">
+          Me interesa especialmente contribuir a la digitalización del sector
+          turístico y hotelero, un ámbito donde la tecnología tiene un impacto
+          directo en el negocio y en las personas que lo viven cada día. Mi
+          objetivo es seguir creciendo como profesional IT en un entorno donde
+          pueda aportar valor real desde el primer día.
+        </p>
+      </div>
+
+      <!-- Skills + formación + idiomas -->
+      <div class="reveal reveal-delay-2 space-y-10">
+
+        <div>
+          <p class="font-mono text-sm uppercase text-ink-soft mb-4">Frameworks, lenguajes y herramientas</p>
+          <div class="flex flex-wrap gap-2">
+            {skills.map((skill) => (
+              <span class="flex items-center gap-2 px-3 py-1.5 text-sm font-bold bg-paper-2 border-2 border-edge text-ink rounded-xl transition-transform hover:-translate-y-1">
+                <svg
+                  role="img"
+                  viewBox="0 0 24 24"
+                  class="w-4 h-4 shrink-0"
+                  style={`fill: #${skill.icon.hex}`}
+                  set:html={skill.icon.svg}
+                />
+                {skill.name}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p class="font-mono text-sm uppercase text-ink-soft mb-4">Formación</p>
+          <ul class="space-y-3">
+            {formacion.map((item) => (
+              <li class="flex items-baseline justify-between gap-4">
+                <div>
+                  <p class="text-sm font-bold">{item.title}</p>
+                  {item.center && <p class="text-sm text-ink-soft">{item.center}</p>}
+                </div>
+                {item.period && (
+                  <span class="font-mono text-xs uppercase text-ink-soft shrink-0">{item.period}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <p class="font-mono text-sm uppercase text-ink-soft mb-4">Idiomas</p>
+          <div class="flex flex-wrap gap-2">
+            {idiomas.map((idioma) => (
+              <span class="px-3 py-1.5 text-sm font-bold bg-paper-2 border-2 border-edge text-ink rounded-xl">
+                {idioma.name}
+                <span class="text-ink-soft font-normal"> · {idioma.level}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>

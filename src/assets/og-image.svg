@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f5efe6"/>
+  <rect x="28" y="28" width="1144" height="574" rx="28" fill="none" stroke="#dfd1bc" stroke-width="4"/>
+
+  <!-- etiqueta superior -->
+  <text x="92" y="132" font-family="ProFontWindows" font-weight="700" font-size="30" fill="#ff8400">01</text>
+  <text x="138" y="132" font-family="ProFontWindows" font-weight="700" font-size="30" fill="#5f5646">// PORTFOLIO</text>
+  <text x="360" y="132" font-family="ProFontWindows" font-weight="700" font-size="30" fill="#ff8400">&#10033;</text>
+
+  <!-- nombre -->
+  <text x="86" y="300" font-family="Urbanist" font-weight="900" font-size="150" letter-spacing="-3" fill="#2d2a24">Jose</text>
+  <text x="86" y="440" font-family="Urbanist" font-weight="900" font-size="150" letter-spacing="-3" fill="#2d2a24">Salas</text>
+
+  <!-- banner rotado -->
+  <g transform="rotate(-5 480 480)">
+    <rect x="180" y="452" width="600" height="60" fill="#263c70" stroke="#f5efe6" stroke-width="6"/>
+    <text x="480" y="495" font-family="ProFontWindows" font-weight="700" font-size="36" fill="#ffffff" text-anchor="middle" letter-spacing="2">DESARROLLADOR DE SOFTWARE</text>
+  </g>
+
+  <!-- url -->
+  <text x="92" y="566" font-family="ProFontWindows" font-weight="700" font-size="26" fill="#5f5646">jsalascan.github.io/miportfolio</text>
+
+  <!-- robot flotante grande -->
+  <g transform="translate(800 90) rotate(-6 180 220) scale(3.1)">
+    <ellipse cx="60" cy="126" rx="24" ry="5" fill="#2d2a24" opacity="0.15"/>
+    <line x1="60" y1="20" x2="60" y2="10" stroke="#2d2a24" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="60" cy="8" r="4.5" fill="#ff8400"/>
+    <rect x="32" y="20" width="56" height="42" rx="12" fill="#263c70" stroke="#2d2a24" stroke-width="3"/>
+    <circle cx="50" cy="40" r="5.5" fill="#34bfff"/>
+    <circle cx="70" cy="40" r="5.5" fill="#34bfff"/>
+    <path d="M52 51 Q60 56 68 51" stroke="#34bfff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <path d="M40 72 Q28 76 26 86" stroke="#2d2a24" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <circle cx="26" cy="89" r="4.5" fill="#f1e5d5" stroke="#2d2a24" stroke-width="2.5"/>
+    <path d="M80 72 Q92 76 94 86" stroke="#2d2a24" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <circle cx="94" cy="89" r="4.5" fill="#f1e5d5" stroke="#2d2a24" stroke-width="2.5"/>
+    <rect x="40" y="66" width="40" height="32" rx="10" fill="#f1e5d5" stroke="#2d2a24" stroke-width="3"/>
+    <circle cx="60" cy="82" r="4" fill="#ff8400"/>
+    <ellipse cx="52" cy="106" rx="4" ry="7" fill="#ff8400"/>
+    <ellipse cx="68" cy="106" rx="4" ry="7" fill="#ff8400" opacity="0.6"/>
+  </g>
+</svg>

@@ -1,0 +1,154 @@
+---
+import { url } from "../utils/url"
+
+const links = [
+  { href: url("#sobre-mi"), label: "Sobre mí" },
+  { href: url("#proyectos"), label: "Proyectos" },
+  { href: url("#experiencia"), label: "Experiencia" },
+  { href: url("#contacto"), label: "Contacto" },
+]
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-paper/85 backdrop-blur-sm border-b-2 border-edge">
+  <nav class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+
+    <!-- Logo + reloj -->
+    <div class="flex items-center gap-4">
+      <a href={url("")} class="font-mono font-bold uppercase tracking-tight text-ink hover:text-accent transition-colors">
+        jsalas.can
+      </a>
+      <div class="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-paper-2 border-2 border-edge rounded-full">
+        <svg class="w-3 h-3 text-ink-soft" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span id="clock" class="text-xs font-mono text-ink-soft tabular-nums">00:00:00</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <!-- Links desktop -->
+      <ul class="hidden md:flex items-center gap-7">
+        {links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="nav-link text-sm font-bold text-ink-soft hover:text-ink transition-colors"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Botón hamburguesa -->
+      <button id="menu-toggle" class="md:hidden p-2 rounded-lg text-ink-soft hover:text-ink hover:bg-paper-2 transition-colors" aria-label="Abrir menú">
+        <svg id="icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        <svg id="icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- Menú móvil desplegable -->
+  <div id="mobile-menu" class="hidden md:hidden border-t-2 border-edge bg-paper/95 backdrop-blur-sm">
+    <ul class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
+      {links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="mobile-link mobile-nav-link block py-2.5 px-3 text-sm font-bold text-ink-soft hover:text-ink hover:bg-paper-2 rounded-lg transition-colors"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</header>
+
+<script>
+  // Reloj
+  function updateClock() {
+    const clock = document.getElementById("clock")
+    if (!clock) return
+    const now = new Date().toLocaleTimeString("es-ES", {
+      timeZone: "Atlantic/Canary",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    })
+    clock.textContent = now
+  }
+  updateClock()
+  setInterval(updateClock, 1000)
+
+  // Menú móvil + sección activa
+  function initNavbar() {
+    const menuToggle = document.getElementById("menu-toggle")
+    const mobileMenu = document.getElementById("mobile-menu")
+    const iconOpen = document.getElementById("icon-open")
+    const iconClose = document.getElementById("icon-close")
+
+    if (menuToggle) {
+      menuToggle.onclick = () => {
+        const isOpen = !mobileMenu?.classList.contains("hidden")
+        mobileMenu?.classList.toggle("hidden", isOpen)
+        iconOpen?.classList.toggle("hidden", !isOpen)
+        iconClose?.classList.toggle("hidden", isOpen)
+      }
+    }
+
+    document.querySelectorAll(".mobile-link").forEach(link => {
+      (link as HTMLElement).onclick = () => {
+        mobileMenu?.classList.add("hidden")
+        iconOpen?.classList.remove("hidden")
+        iconClose?.classList.add("hidden")
+      }
+    })
+
+    // Sección activa — desktop y móvil
+    const sections = document.querySelectorAll("section[id]")
+    const navLinks = document.querySelectorAll(".nav-link") as NodeListOf<HTMLAnchorElement>
+    const mobileNavLinks = document.querySelectorAll(".mobile-nav-link") as NodeListOf<HTMLAnchorElement>
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id
+
+            // Desktop
+            navLinks.forEach(link => {
+              const isActive = link.href.includes(`#${id}`)
+              link.classList.toggle("text-accent", isActive)
+              link.classList.toggle("text-ink-soft", !isActive)
+            })
+
+            // Móvil
+            mobileNavLinks.forEach(link => {
+              const isActive = link.href.includes(`#${id}`)
+              link.classList.toggle("text-accent", isActive)
+              link.classList.toggle("bg-paper-2", isActive)
+              link.classList.toggle("text-ink-soft", !isActive)
+            })
+          }
+        })
+      },
+      { rootMargin: "-40% 0px -55% 0px" }
+    )
+
+    sections.forEach(section => observer.observe(section))
+  }
+
+  initNavbar()
+  document.addEventListener("astro:page-load", initNavbar)
+</script>
