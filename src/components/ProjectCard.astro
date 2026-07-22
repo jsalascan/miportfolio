@@ -1,8 +1,24 @@
 ---
-const { title, description, tags, url, demo } = Astro.props
+import { url as toUrl } from "../utils/url"
+
+const { title, description, tags, url, demo, image } = Astro.props
 ---
 
-<article class="group h-full p-6 bg-paper-2 border-2 border-edge rounded-3xl hover:border-ink hover:-translate-y-1 transition-all">
+<article class="group h-full bg-paper-2 border-2 border-edge rounded-3xl overflow-hidden hover:border-ink hover:-translate-y-1 transition-all">
+
+  <!-- Banner -->
+  {image && (
+    <div class="border-b-2 border-edge overflow-hidden">
+      <img
+        src={toUrl(image)}
+        alt={`Banner de ${title}`}
+        class="w-full aspect-[1200/630] object-cover"
+        loading="lazy"
+      />
+    </div>
+  )}
+
+  <div class="p-6">
 
   <!-- Cabecera -->
   <div class="flex items-start justify-between gap-4 mb-3">
@@ -37,4 +53,5 @@ const { title, description, tags, url, demo } = Astro.props
     ))}
   </div>
 
+  </div>
 </article>

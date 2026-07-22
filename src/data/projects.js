@@ -1,10 +1,20 @@
 export const projects = [
     {
       title: "miportfolio",
-      description: "Portfolio personal con estética papel y monigotes SVG animados con CSS. Construido con Astro y Tailwind CSS, desplegado en GitHub Pages con CI/CD de GitHub Actions.",
-      tags: ["Astro", "Tailwind CSS", "SVG", "GitHub Actions"],
+      description: "Mi portfolio de desarrollador: Astro, Tailwind CSS y una pandilla de robots animados.",
+      tags: ["Astro", "Tailwind CSS", "GitHub Actions"],
       url: "https://github.com/jsalascan/miportfolio",
       demo: "https://jsalascan.github.io/miportfolio/",
+      image: "og-image.png",
+      featured: true,
+    },
+    {
+      title: "vue-rolekit",
+      description: "Kit de componentes Vue 3: botón, input, select, tabla y más, todos con estilo propio.",
+      tags: ["Vue 3", "TypeScript", "Vite"],
+      url: "https://github.com/jsalascan/vue-rolekit",
+      demo: "https://jsalascan.github.io/vue-rolekit/",
+      image: "projects/vue-rolekit-og.png",
       featured: true,
     },
     // {
