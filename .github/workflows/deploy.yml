@@ -15,7 +15,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # El worker tiene su propio pnpm-workspace.yaml, así que se instala aparte
+  # y no comparte node_modules con el portfolio.
+  test-worker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Instalar dependencias del worker
+        run: pnpm install --frozen-lockfile
+        working-directory: worker
+
+      - name: Tests del worker
+        run: pnpm test
+        working-directory: worker
+
+      - name: Comprobar tipos del worker
+        run: pnpm exec tsc --noEmit
+        working-directory: worker
+
   build:
+    needs: test-worker
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
