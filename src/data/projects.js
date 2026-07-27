@@ -6,6 +6,7 @@ export const projects = [
       url: "https://github.com/jsalascan/miportfolio",
       demo: "https://jsalascan.github.io/miportfolio/",
       image: "og-image.png",
+      badge: "Actualizado",
       featured: true,
     },
     {
