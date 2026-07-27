@@ -1,0 +1,119 @@
+---
+import { ENDPOINT_CONTACTO } from "../config/contacto"
+---
+
+<form id="form-contacto" class="w-full flex flex-col gap-4 text-left" novalidate>
+  <div>
+    <label for="campo-nombre" class="font-mono text-xs uppercase text-ink-soft">Nombre</label>
+    <input
+      id="campo-nombre"
+      name="nombre"
+      type="text"
+      required
+      class="mt-1 w-full px-4 py-2.5 bg-paper border-2 border-edge rounded-xl text-ink focus:border-accent focus:outline-none transition-colors"
+    />
+  </div>
+
+  <div>
+    <label for="campo-email" class="font-mono text-xs uppercase text-ink-soft">Email</label>
+    <input
+      id="campo-email"
+      name="email"
+      type="email"
+      required
+      class="mt-1 w-full px-4 py-2.5 bg-paper border-2 border-edge rounded-xl text-ink focus:border-accent focus:outline-none transition-colors"
+    />
+  </div>
+
+  <div>
+    <label for="campo-mensaje" class="font-mono text-xs uppercase text-ink-soft">Mensaje</label>
+    <textarea
+      id="campo-mensaje"
+      name="mensaje"
+      rows="4"
+      required
+      class="mt-1 w-full px-4 py-2.5 bg-paper border-2 border-edge rounded-xl text-ink resize-y focus:border-accent focus:outline-none transition-colors"
+    ></textarea>
+  </div>
+
+  <!-- Trampa para bots. Fuera de pantalla en vez de display:none: algunos
+       automatismos rellenan todo lo que no esté explícitamente oculto. -->
+  <input
+    type="text"
+    name="_hp"
+    tabindex="-1"
+    autocomplete="off"
+    aria-hidden="true"
+    class="absolute -left-[9999px] w-px h-px opacity-0"
+  />
+
+  <button
+    type="submit"
+    class="px-7 py-3 bg-accent text-white text-sm font-bold rounded-full hover:bg-ink transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    Enviar mensaje
+  </button>
+
+  <p id="aviso-contacto" role="status" aria-live="polite" class="font-mono text-xs min-h-[1.5em]"></p>
+</form>
+
+<script define:vars={{ ENDPOINT_CONTACTO }}>
+  function initFormularioContacto() {
+    const form = document.getElementById("form-contacto")
+    if (!form || form.dataset.listo === "si") return
+    form.dataset.listo = "si"
+
+    const boton = form.querySelector("button[type=submit]")
+    const aviso = document.getElementById("aviso-contacto")
+    const cargadoEn = Date.now()
+
+    function mostrar(texto, tono) {
+      aviso.textContent = texto
+      aviso.className = `font-mono text-xs min-h-[1.5em] ${
+        tono === "error" ? "text-accent" : "text-ink-soft"
+      }`
+    }
+
+    form.addEventListener("submit", async (evento) => {
+      evento.preventDefault()
+
+      const datos = new FormData(form)
+      const cuerpo = {
+        nombre: datos.get("nombre") || "",
+        email: datos.get("email") || "",
+        mensaje: datos.get("mensaje") || "",
+        _hp: datos.get("_hp") || "",
+        _t: cargadoEn,
+      }
+
+      boton.disabled = true
+      mostrar("Enviando…", "info")
+
+      try {
+        const respuesta = await fetch(ENDPOINT_CONTACTO, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cuerpo),
+        })
+
+        const resultado = await respuesta.json().catch(() => ({}))
+
+        if (respuesta.ok) {
+          form.reset()
+          mostrar("¡Recibido! Te respondo en cuanto pueda.", "info")
+        } else {
+          // El mensaje del servidor solo llega cuando un campo está mal;
+          // el resto de fallos se resumen sin dar detalles internos.
+          mostrar(resultado.error || "No se pudo enviar. Inténtalo en un momento.", "error")
+        }
+      } catch {
+        mostrar("No se pudo enviar. Inténtalo en un momento.", "error")
+      } finally {
+        boton.disabled = false
+      }
+    })
+  }
+
+  initFormularioContacto()
+  document.addEventListener("astro:page-load", initFormularioContacto)
+</script>
