@@ -2,9 +2,13 @@
 import { url as toUrl } from "../utils/url"
 
 const { title, description, tags, url, demo, image, badge } = Astro.props
+
+// La tarjeta entera lleva a la demo. Sin demo, al repositorio: hacer clic y no
+// ir a ninguna parte sería peor que llegar al código.
+const destino = demo ?? url
 ---
 
-<article class="group h-full bg-paper-2 border-2 border-edge rounded-3xl overflow-hidden hover:border-ink hover:-translate-y-1 transition-all">
+<article class="group relative h-full bg-paper-2 border-2 border-edge rounded-3xl overflow-hidden hover:border-ink hover:-translate-y-1 transition-all">
 
   <!-- Banner -->
   {image && (
@@ -23,8 +27,17 @@ const { title, description, tags, url, demo, image, badge } = Astro.props
   <!-- Cabecera -->
   <div class="flex items-start justify-between gap-4 mb-3">
     <div class="flex items-center gap-2 flex-wrap">
+      <!-- Enlace extendido: el `after` cubre la tarjeta entera para que se
+           pueda hacer clic en cualquier parte, sin anidar enlaces (lo que sería
+           HTML inválido) y dejando un único destino en el orden de tabulación. -->
       <h3 class="font-black text-lg group-hover:text-accent transition-colors">
-        {title}
+        <a
+          href={destino}
+          target="_blank"
+          class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm"
+        >
+          {title}
+        </a>
       </h3>
 
       <!-- Mismo lenguaje visual que el RBadge de vue-rolekit -->
@@ -35,13 +48,9 @@ const { title, description, tags, url, demo, image, badge } = Astro.props
       )}
     </div>
 
-    <!-- Links -->
-    <div class="flex items-center gap-3 shrink-0">
-      {demo && (
-        <a href={demo} target="_blank" class="font-mono text-xs uppercase text-ink-soft hover:text-accent transition-colors">
-          Demo ↗
-        </a>
-      )}
+    <!-- `relative z-10` lo levanta por encima del enlace extendido de la
+         tarjeta, que si no se tragaría este clic. -->
+    <div class="relative z-10 flex items-center gap-3 shrink-0">
       <a href={url} target="_blank" class="font-mono text-xs uppercase text-ink-soft hover:text-accent transition-colors">
         GitHub ↗
       </a>
