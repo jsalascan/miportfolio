@@ -1,28 +1,32 @@
 ---
-import { ENDPOINT_CONTACTO } from "../config/contacto"
+import { ENDPOINT_CONTACTO, TURNSTILE_SITE_KEY } from "../config/contacto"
 ---
 
 <form id="form-contacto" class="w-full flex flex-col gap-4 text-left" novalidate>
-  <div>
-    <label for="campo-nombre" class="font-mono text-xs uppercase text-ink-soft">Nombre</label>
-    <input
-      id="campo-nombre"
-      name="nombre"
-      type="text"
-      required
-      class="mt-1 w-full px-4 py-2.5 bg-paper border-2 border-edge rounded-xl text-ink focus:border-accent focus:outline-none transition-colors"
-    />
-  </div>
+  <!-- Nombre y email comparten fila: son cortos y juntos ocupan el ancho sin
+       estirar los campos más de lo que se llega a escribir en ellos. -->
+  <div class="grid sm:grid-cols-2 gap-4">
+    <div>
+      <label for="campo-nombre" class="font-mono text-xs uppercase text-ink-soft">Nombre</label>
+      <input
+        id="campo-nombre"
+        name="nombre"
+        type="text"
+        required
+        class="mt-1 w-full px-4 py-2.5 bg-paper border-2 border-edge rounded-xl text-ink focus:border-accent focus:outline-none transition-colors"
+      />
+    </div>
 
-  <div>
-    <label for="campo-email" class="font-mono text-xs uppercase text-ink-soft">Email</label>
-    <input
-      id="campo-email"
-      name="email"
-      type="email"
-      required
-      class="mt-1 w-full px-4 py-2.5 bg-paper border-2 border-edge rounded-xl text-ink focus:border-accent focus:outline-none transition-colors"
-    />
+    <div>
+      <label for="campo-email" class="font-mono text-xs uppercase text-ink-soft">Email</label>
+      <input
+        id="campo-email"
+        name="email"
+        type="email"
+        required
+        class="mt-1 w-full px-4 py-2.5 bg-paper border-2 border-edge rounded-xl text-ink focus:border-accent focus:outline-none transition-colors"
+      />
+    </div>
   </div>
 
   <div>
@@ -47,17 +51,40 @@ import { ENDPOINT_CONTACTO } from "../config/contacto"
     class="absolute -left-[9999px] w-px h-px opacity-0"
   />
 
-  <button
-    type="submit"
-    class="px-7 py-3 bg-accent text-white text-sm font-bold rounded-full hover:bg-ink transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    Enviar mensaje
-  </button>
+  <!-- Sin alto reservado: en modo `interaction-only` el widget solo se dibuja
+       cuando Cloudflare pide interacción, que es la minoría de las visitas.
+       Ojo con ocultarlo mientras está vacío: Turnstile mide este contenedor al
+       renderizar y sobre un `display:none` obtiene 0 px de ancho y falla. -->
+  <div id="turnstile-contacto"></div>
+
+  <!-- `gap-y` mayor que `gap-x`: al envolver en móvil, los enlaces y el botón
+       pasan a filas distintas y con el mismo hueco quedaban apelmazados. -->
+  <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-5 pt-3">
+    <div class="flex flex-wrap gap-3">
+      <slot name="enlaces" />
+    </div>
+
+    <!-- Arranca deshabilitado: se habilita cuando Turnstile entrega un token. -->
+    <button
+      type="submit"
+      disabled
+      class="w-full sm:w-auto px-7 py-3 bg-accent text-white text-sm font-bold rounded-full hover:bg-ink transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      Enviar mensaje
+    </button>
+  </div>
 
   <p id="aviso-contacto" role="status" aria-live="polite" class="font-mono text-xs min-h-[1.5em]"></p>
 </form>
 
-<script define:vars={{ ENDPOINT_CONTACTO }}>
+<script
+  is:inline
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+  async
+  defer
+></script>
+
+<script define:vars={{ ENDPOINT_CONTACTO, TURNSTILE_SITE_KEY }}>
   function initFormularioContacto() {
     const form = document.getElementById("form-contacto")
     if (!form || form.dataset.listo === "si") return
@@ -74,14 +101,113 @@ import { ENDPOINT_CONTACTO } from "../config/contacto"
       }`
     }
 
+    const contenedor = document.getElementById("turnstile-contacto")
+    let idWidget = null
+
+    function montarWidget() {
+      if (!window.turnstile || idWidget !== null) return
+
+      idWidget = window.turnstile.render(contenedor, {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: "light",
+        // La caja de Cloudflare no pega con el papel del sitio y en modo
+        // Gestionado casi nadie necesita verla: solo se dibuja cuando hay que
+        // interactuar de verdad.
+        appearance: "interaction-only",
+        callback: () => {
+          boton.disabled = false
+        },
+        "expired-callback": () => {
+          reiniciarVerificacion()
+        },
+        // Devolver `true` suprime el error nativo de Turnstile, que aparece y
+        // se retira sin decirle al visitante qué hacer. El código queda en la
+        // consola por si hay que diagnosticar.
+        "error-callback": (codigo) => {
+          console.error("Turnstile falló con el código", codigo)
+          boton.disabled = true
+          mostrar(
+            "No se pudo verificar la conexión. Recarga la página o escríbeme por LinkedIn: linkedin.com/in/jsalascan",
+            "error",
+          )
+          return true
+        },
+      })
+    }
+
+    // Solo se llama cuando el token se ha gastado de verdad: son de un solo uso,
+    // pero tirarlos por un fallo de validación deja al visitante esperando otro
+    // sin motivo.
+    function reiniciarVerificacion() {
+      if (idWidget === null) return
+      boton.disabled = true
+      window.turnstile.reset(idWidget)
+    }
+
+    const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    // Mismos límites que el Worker: así el visitante corrige sin gastar un
+    // token ni esperar a un viaje de ida y vuelta.
+    function revisarCampos(datos) {
+      const nombre = (datos.get("nombre") || "").trim()
+      if (nombre.length < 2 || nombre.length > 80) {
+        return { campo: "campo-nombre", error: "Escribe tu nombre." }
+      }
+
+      const email = (datos.get("email") || "").trim()
+      if (!FORMATO_EMAIL.test(email)) {
+        return { campo: "campo-email", error: "Ese email no parece válido." }
+      }
+
+      const mensaje = (datos.get("mensaje") || "").trim()
+      if (mensaje.length < 10 || mensaje.length > 2000) {
+        return { campo: "campo-mensaje", error: "Cuéntame un poco más: al menos 10 caracteres." }
+      }
+
+      return null
+    }
+
+    // El script de Turnstile carga de forma asíncrona y puede no estar listo
+    // todavía. Si nunca llega —bloqueadores de contenido, red restringida— el
+    // visitante se quedaría con un botón muerto, así que se le ofrece otra vía
+    // en lugar de dejarlo sin forma de contactar.
+    let intentos = 0
+    const espera = setInterval(() => {
+      montarWidget()
+      intentos += 1
+
+      if (idWidget !== null || intentos > 20) {
+        clearInterval(espera)
+      }
+
+      if (idWidget === null && intentos > 20) {
+        mostrar(
+          "No se pudo cargar la verificación. Escríbeme por LinkedIn: linkedin.com/in/jsalascan",
+          "error",
+        )
+      }
+    }, 250)
+
     form.addEventListener("submit", async (evento) => {
       evento.preventDefault()
 
       const datos = new FormData(form)
+
+      // Antes de tocar el token: un formulario incompleto no debe gastar una
+      // verificación.
+      const fallo = revisarCampos(datos)
+      if (fallo) {
+        mostrar(fallo.error, "error")
+        document.getElementById(fallo.campo)?.focus()
+        return
+      }
+
       const cuerpo = {
         nombre: datos.get("nombre") || "",
         email: datos.get("email") || "",
         mensaje: datos.get("mensaje") || "",
+        turnstileToken:
+          idWidget !== null ? window.turnstile.getResponse(idWidget) : "",
         _hp: datos.get("_hp") || "",
         _t: cargadoEn,
       }
@@ -101,14 +227,19 @@ import { ENDPOINT_CONTACTO } from "../config/contacto"
         if (respuesta.ok) {
           form.reset()
           mostrar("¡Recibido! Te respondo en cuanto pueda.", "info")
+          reiniciarVerificacion()
+        } else if (respuesta.status === 403) {
+          // El Worker consumió el token y lo dio por malo: hace falta otro.
+          mostrar("La verificación caducó. Inténtalo de nuevo.", "error")
+          reiniciarVerificacion()
         } else {
-          // El mensaje del servidor solo llega cuando un campo está mal;
-          // el resto de fallos se resumen sin dar detalles internos.
+          // Validación o fallo del servidor: el Worker no llegó a gastar el
+          // token, así que el mismo sigue sirviendo para reintentar.
           mostrar(resultado.error || "No se pudo enviar. Inténtalo en un momento.", "error")
+          boton.disabled = false
         }
       } catch {
         mostrar("No se pudo enviar. Inténtalo en un momento.", "error")
-      } finally {
         boton.disabled = false
       }
     })

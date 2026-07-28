@@ -14,18 +14,25 @@ const social = [
 
     <SectionTitle number="04" label="Contacto" />
 
-    <div class="grid md:grid-cols-2 gap-16 items-start">
-      <div class="reveal md:pt-[86px]">
-        <p class="text-3xl font-black leading-snug mb-4">
+    <div class="max-w-3xl mx-auto">
+
+      <div class="reveal flex items-center justify-center gap-3 mb-4">
+        <p class="text-4xl md:text-5xl font-black leading-none">
           ¿Hablamos?
         </p>
-        <p class="text-ink-soft leading-relaxed mb-6">
-          Si tienes un proyecto en mente, una oferta o simplemente quieres
-          saludar, escríbeme a través del formulario y te respondo lo antes posible.
-        </p>
-        <div class="flex flex-wrap gap-3">
+        <Monigote variant="wave" class="w-16 shrink-0" />
+      </div>
+
+      <p class="reveal text-ink-soft leading-relaxed text-center max-w-xl mx-auto mb-10">
+        Si tienes un proyecto en mente, una oferta o simplemente quieres
+        saludar, escríbeme y te respondo lo antes posible.
+      </p>
+
+      <div class="reveal reveal-delay-1 p-6 sm:p-8 bg-paper-2 border-2 border-edge rounded-3xl">
+        <FormularioContacto>
           {social.map((item) => (
             <a
+              slot="enlaces"
               href={item.url}
               target="_blank"
               class="px-5 py-2.5 border-2 border-edge text-ink text-sm font-bold rounded-full hover:border-ink transition-colors"
@@ -33,16 +40,7 @@ const social = [
               {item.label} ↗
             </a>
           ))}
-        </div>
-      </div>
-
-      <!-- Formulario derecha -->
-      <div class="reveal reveal-delay-1 flex flex-col items-center">
-        <Monigote variant="wave" class="w-20 -mb-4 relative z-10" />
-
-        <div class="w-full p-8 bg-paper-2 border-2 border-edge rounded-3xl">
-          <FormularioContacto />
-        </div>
+        </FormularioContacto>
       </div>
 
     </div>
