@@ -1,10 +1,16 @@
 import { validarEnvio } from "./validacion"
-import { formatearMensaje } from "./mensaje"
+import { formatearMensaje, construirTeclado } from "./mensaje"
+import type { TecladoRespuesta } from "./mensaje"
 import { enviarATelegram } from "./telegram"
+import { mailtoDesdeParametros } from "./respuesta"
+import { verificarTurnstile } from "./turnstile"
+import type { ResultadoTurnstile } from "./turnstile"
 
 export interface Entorno {
   BOT_TOKEN: string
   CHAT_ID: string
+  TURNSTILE_SECRET: string
+  LIMITADOR: RateLimit
 }
 
 export const ORIGENES_PERMITIDOS: readonly string[] = [
@@ -12,10 +18,21 @@ export const ORIGENES_PERMITIDOS: readonly string[] = [
   "http://localhost:4321",
 ]
 
-type Enviar = (texto: string, token: string, chatId: string) => Promise<void>
+type Enviar = (
+  texto: string,
+  token: string,
+  chatId: string,
+  teclado?: TecladoRespuesta,
+) => Promise<void>
 
-const enviarPorDefecto: Enviar = (texto, token, chatId) =>
-  enviarATelegram(texto, token, chatId)
+const enviarPorDefecto: Enviar = (texto, token, chatId, teclado) =>
+  enviarATelegram(texto, token, chatId, teclado)
+
+type Verificar = (
+  token: string,
+  secreto: string,
+  ip: string,
+) => Promise<ResultadoTurnstile>
 
 function cabeceras(origen: string): HeadersInit {
   return {
@@ -40,7 +57,22 @@ export async function manejar(
   peticion: Request,
   entorno: Entorno,
   enviar: Enviar = enviarPorDefecto,
+  verificar: Verificar = verificarTurnstile,
 ): Promise<Response> {
+  const direccion = new URL(peticion.url)
+
+  // Va antes que el resto de comprobaciones: es una navegación que llega desde
+  // el botón de Telegram, sin cabecera `Origin` y sin cuerpo que validar.
+  if (peticion.method === "GET" && direccion.pathname === "/responder") {
+    const destino = mailtoDesdeParametros(direccion.searchParams)
+
+    if (destino === null) {
+      return new Response("Enlace de respuesta no válido", { status: 400 })
+    }
+
+    return new Response(null, { status: 302, headers: { Location: destino } })
+  }
+
   const origen = peticion.headers.get("Origin") ?? ""
 
   if (!ORIGENES_PERMITIDOS.includes(origen)) {
@@ -56,6 +88,15 @@ export async function manejar(
 
   if (peticion.method !== "POST") {
     return json({ error: "Método no permitido" }, 405, origen)
+  }
+
+  // Antes de leer el cuerpo: así una avalancha de payloads grandes no llega
+  // siquiera a consumir el parseo.
+  const ip = peticion.headers.get("CF-Connecting-IP") ?? ""
+  const { success } = await entorno.LIMITADOR.limit({ key: ip })
+
+  if (!success) {
+    return json({ error: "Demasiados envíos. Espera un minuto." }, 429, origen)
   }
 
   let cuerpo: unknown
@@ -77,11 +118,28 @@ export async function manejar(
     return json({ error: resultado.error, campo: resultado.campo }, 400, origen)
   }
 
+  // Turnstile va al final de la cadena por ser la única comprobación que sale
+  // a la red: los envíos que ya fallan por otro motivo no la gastan.
+  const campos = cuerpo as Record<string, unknown>
+  const token =
+    typeof campos.turnstileToken === "string" ? campos.turnstileToken : ""
+  const verificacion = await verificar(token, entorno.TURNSTILE_SECRET, ip)
+
+  if (verificacion.estado === "rechazado") {
+    return json({ error: "Verificación fallida" }, 403, origen)
+  }
+
+  // Si Turnstile no responde el mensaje pasa igualmente: esa caída no la
+  // provoca un atacante y las demás capas ya se han aplicado. Rechazarlo solo
+  // costaría contactos legítimos.
+  const verificado = verificacion.estado === "valido"
+
   try {
     await enviar(
-      formatearMensaje(resultado.datos),
+      formatearMensaje(resultado.datos, verificado),
       entorno.BOT_TOKEN,
       entorno.CHAT_ID,
+      construirTeclado(resultado.datos, direccion.origin),
     )
   } catch (error) {
     // El detalle se registra en los logs del Worker, nunca se devuelve al

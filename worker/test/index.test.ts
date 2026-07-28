@@ -8,7 +8,22 @@ vi.mock("../src/telegram", () => ({
   enviarATelegram: vi.fn().mockResolvedValue(undefined),
 }))
 
-const ENTORNO = { BOT_TOKEN: "123:ABC", CHAT_ID: "999" }
+// Igual que con Telegram: sin esto, los tests que no inyectan `verificar`
+// saldrían a la red contra siteverify.
+vi.mock("../src/turnstile", () => ({
+  verificarTurnstile: vi.fn().mockResolvedValue({ estado: "valido" }),
+}))
+
+function limitador(permite = true) {
+  return { limit: vi.fn().mockResolvedValue({ success: permite }) }
+}
+
+const ENTORNO = {
+  BOT_TOKEN: "123:ABC",
+  CHAT_ID: "999",
+  TURNSTILE_SECRET: "sec",
+  LIMITADOR: limitador(),
+}
 const ORIGEN = "https://jsalascan.github.io"
 const AHORA = Date.now()
 
@@ -27,6 +42,7 @@ const VALIDO = {
   nombre: "María López",
   email: "maria@ejemplo.com",
   mensaje: "Me interesa hablar contigo sobre un proyecto.",
+  turnstileToken: "tok",
   _hp: "",
   _t: AHORA - 10_000,
 }
@@ -39,6 +55,19 @@ describe("handler del worker", () => {
     expect(respuesta.status).toBe(200)
     expect(await respuesta.json()).toEqual({ ok: true })
     expect(enviar).toHaveBeenCalledOnce()
+  })
+
+  it("adjunta el teclado de respuesta al enviar", async () => {
+    const enviar = vi.fn().mockResolvedValue(undefined)
+    await manejar(peticion(VALIDO), ENTORNO, enviar)
+
+    const [, , , teclado] = enviar.mock.calls[0]
+    const [[responder, copiar]] = teclado.inline_keyboard
+
+    expect(responder.text).toBe("✉️ Responder")
+    expect(responder.url).toContain("https://buzon.workers.dev/responder?")
+    expect(responder.url).toContain("to=maria%40ejemplo.com")
+    expect(copiar.copy_text).toEqual({ text: "maria@ejemplo.com" })
   })
 
   it("incluye la cabecera CORS del origen permitido", async () => {
@@ -163,5 +192,135 @@ describe("export por defecto, invocado como lo hace Cloudflare", () => {
     expect(respuesta.status).toBe(200)
     expect(await respuesta.json()).toEqual({ ok: true })
     expect(enviarATelegram).toHaveBeenCalledOnce()
+  })
+})
+
+describe("redirección a la app de correo", () => {
+  function get(consulta: string) {
+    return new Request(`https://buzon.workers.dev/responder?${consulta}`, {
+      method: "GET",
+    })
+  }
+
+  it("redirige al mailto sin exigir Origin", async () => {
+    const respuesta = await manejar(
+      get("to=maria%40ejemplo.com&su=Re%3A%20hola&body=Hola"),
+      ENTORNO,
+      vi.fn(),
+    )
+
+    expect(respuesta.status).toBe(302)
+    expect(respuesta.headers.get("Location")).toBe(
+      "mailto:maria@ejemplo.com?subject=Re%3A%20hola&body=Hola",
+    )
+  })
+
+  it("rechaza un destinatario que no es un email", async () => {
+    const respuesta = await manejar(get("to=no-es-email"), ENTORNO, vi.fn())
+
+    expect(respuesta.status).toBe(400)
+  })
+
+  it("no consume el límite de envíos", async () => {
+    const entorno = { ...ENTORNO, LIMITADOR: limitador() }
+    await manejar(get("to=maria%40ejemplo.com"), entorno, vi.fn())
+
+    expect(entorno.LIMITADOR.limit).not.toHaveBeenCalled()
+  })
+})
+
+describe("verificación con Turnstile", () => {
+  it("rechaza el envío si Turnstile invalida el token", async () => {
+    const enviar = vi.fn().mockResolvedValue(undefined)
+    const verificar = vi.fn().mockResolvedValue({ estado: "rechazado" })
+
+    const respuesta = await manejar(peticion(VALIDO), ENTORNO, enviar, verificar)
+
+    expect(respuesta.status).toBe(403)
+    expect(await respuesta.json()).toEqual({ error: "Verificación fallida" })
+    expect(enviar).not.toHaveBeenCalled()
+  })
+
+  it("entrega el mensaje marcado si Turnstile no responde", async () => {
+    const enviar = vi.fn().mockResolvedValue(undefined)
+    const verificar = vi.fn().mockResolvedValue({ estado: "indeterminado" })
+
+    const respuesta = await manejar(peticion(VALIDO), ENTORNO, enviar, verificar)
+
+    expect(respuesta.status).toBe(200)
+    const [texto] = enviar.mock.calls[0]
+    expect(texto).toContain("Sin verificar")
+  })
+
+  it("pasa el token y la IP del visitante a la verificación", async () => {
+    const enviar = vi.fn().mockResolvedValue(undefined)
+    const verificar = vi.fn().mockResolvedValue({ estado: "valido" })
+    const conIp = peticion(VALIDO)
+    conIp.headers.set("CF-Connecting-IP", "9.9.9.9")
+
+    await manejar(conIp, ENTORNO, enviar, verificar)
+
+    expect(verificar).toHaveBeenCalledWith("tok", "sec", "9.9.9.9")
+  })
+
+  it("no gasta la verificación en envíos con campos inválidos", async () => {
+    const enviar = vi.fn().mockResolvedValue(undefined)
+    const verificar = vi.fn().mockResolvedValue({ estado: "valido" })
+
+    await manejar(peticion({ ...VALIDO, email: "no-es-email" }), ENTORNO, enviar, verificar)
+
+    expect(verificar).not.toHaveBeenCalled()
+  })
+})
+
+describe("límite de envíos por IP", () => {
+  it("corta el envío al superar el límite", async () => {
+    const enviar = vi.fn().mockResolvedValue(undefined)
+    const entorno = { ...ENTORNO, LIMITADOR: limitador(false) }
+
+    const respuesta = await manejar(peticion(VALIDO), entorno, enviar)
+
+    expect(respuesta.status).toBe(429)
+    expect(await respuesta.json()).toEqual({
+      error: "Demasiados envíos. Espera un minuto.",
+    })
+    expect(enviar).not.toHaveBeenCalled()
+  })
+
+  it("aplica el límite antes de leer el cuerpo de la petición", async () => {
+    const enviar = vi.fn().mockResolvedValue(undefined)
+    const entorno = { ...ENTORNO, LIMITADOR: limitador(false) }
+    const rota = new Request("https://buzon.workers.dev/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Origin: ORIGEN },
+      body: "{ esto no es json",
+    })
+
+    const respuesta = await manejar(rota, entorno, enviar)
+
+    expect(respuesta.status).toBe(429)
+  })
+
+  it("usa la IP del visitante como clave del límite", async () => {
+    const enviar = vi.fn().mockResolvedValue(undefined)
+    const entorno = { ...ENTORNO, LIMITADOR: limitador() }
+    const conIp = peticion(VALIDO)
+    conIp.headers.set("CF-Connecting-IP", "9.9.9.9")
+
+    await manejar(conIp, entorno, enviar)
+
+    expect(entorno.LIMITADOR.limit).toHaveBeenCalledWith({ key: "9.9.9.9" })
+  })
+
+  it("no limita las peticiones de sondeo CORS", async () => {
+    const entorno = { ...ENTORNO, LIMITADOR: limitador() }
+    const respuesta = await manejar(
+      peticion(VALIDO, { metodo: "OPTIONS" }),
+      entorno,
+      vi.fn(),
+    )
+
+    expect(respuesta.status).toBe(204)
+    expect(entorno.LIMITADOR.limit).not.toHaveBeenCalled()
   })
 })

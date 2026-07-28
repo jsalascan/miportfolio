@@ -8,7 +8,7 @@ function respuestaOk() {
 describe("enviarATelegram", () => {
   it("llama al endpoint sendMessage con el token en la ruta", async () => {
     const doble = vi.fn().mockResolvedValue(respuestaOk())
-    await enviarATelegram("hola", "123:ABC", "999", doble as unknown as typeof fetch)
+    await enviarATelegram("hola", "123:ABC", "999", undefined, doble as unknown as typeof fetch)
 
     const [url] = doble.mock.calls[0]
     expect(url).toBe("https://api.telegram.org/bot123:ABC/sendMessage")
@@ -16,7 +16,7 @@ describe("enviarATelegram", () => {
 
   it("envía el chat, el texto y el modo HTML en el cuerpo", async () => {
     const doble = vi.fn().mockResolvedValue(respuestaOk())
-    await enviarATelegram("hola", "123:ABC", "999", doble as unknown as typeof fetch)
+    await enviarATelegram("hola", "123:ABC", "999", undefined, doble as unknown as typeof fetch)
 
     const [, opciones] = doble.mock.calls[0]
     expect(opciones.method).toBe("POST")
@@ -34,7 +34,25 @@ describe("enviarATelegram", () => {
     )
 
     await expect(
-      enviarATelegram("hola", "123:ABC", "999", doble as unknown as typeof fetch),
+      enviarATelegram("hola", "123:ABC", "999", undefined, doble as unknown as typeof fetch),
     ).rejects.toThrow(/chat not found/)
+  })
+
+  it("adjunta el teclado como reply_markup cuando se le pasa", async () => {
+    const doble = vi.fn().mockResolvedValue(respuestaOk())
+    const teclado = { inline_keyboard: [[{ text: "✉️", url: "https://ejemplo.com" }]] }
+
+    await enviarATelegram("hola", "123:ABC", "999", teclado, doble as unknown as typeof fetch)
+
+    const [, opciones] = doble.mock.calls[0]
+    expect(JSON.parse(opciones.body).reply_markup).toEqual(teclado)
+  })
+
+  it("omite reply_markup si no hay teclado", async () => {
+    const doble = vi.fn().mockResolvedValue(respuestaOk())
+    await enviarATelegram("hola", "123:ABC", "999", undefined, doble as unknown as typeof fetch)
+
+    const [, opciones] = doble.mock.calls[0]
+    expect(JSON.parse(opciones.body)).not.toHaveProperty("reply_markup")
   })
 })
