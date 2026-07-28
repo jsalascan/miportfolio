@@ -1,7 +1,7 @@
 {
   "name": "miportfolio",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "packageManager": "pnpm@11.1.2",
   "scripts": {
     "dev": "astro dev",
