@@ -5,23 +5,23 @@ const data = {
   nombre: ["Jose", "Salas"],
   rol: "Desarrollador de Software",
   descripcion:
-    "Desarrollador de Software y Técnico IT. Apasionado de la tecnología aplicada al sector hotelero: aplicaciones web y móviles que aportan valor real desde el primer día.",
+    "Construyo software claro y fiable, pensado para la gente que lo usa cada día.",
   linkedin: "https://www.linkedin.com/in/jsalascan/",
   github: "https://github.com/jsalascan",
 }
 ---
 
-<section class="min-h-screen flex flex-col items-center justify-center relative px-6 pt-16 overflow-hidden">
+<section class="min-h-screen flex flex-col items-center justify-center relative px-6 pt-6 sm:pt-16 overflow-hidden">
 
   <!-- Nombre gigante + banner rotado -->
   <div class="relative w-fit mx-auto mb-12">
 
-    <!-- Monigote flotante: clic para bajar. En móvil vive encima del nombre -->
+    <!-- Monigote flotante: clic para bajar. Solo en desktop -->
     <button
       data-scroll-next
       aria-label="Bajar a la siguiente sección"
       title="¡Dame para bajar!"
-      class="scroll-buddy animate-fade-up block w-20 mx-auto mb-2 md:mb-0 md:w-28 md:absolute md:-left-40 md:-top-8 md:-rotate-6 border-0 bg-transparent p-0"
+      class="scroll-buddy animate-fade-up hidden md:block md:w-28 md:absolute md:-left-40 md:-top-8 md:-rotate-6 border-0 bg-transparent p-0"
       style="animation-delay: 0.6s; opacity: 0; animation-fill-mode: forwards;"
     >
       <Monigote variant="float" class="w-full overflow-visible" />
@@ -36,7 +36,7 @@ const data = {
 
     <!-- Banner etiqueta: en móvil debajo del nombre, en desktop solapado a la derecha -->
     <div
-      class="banner-tag relative mx-auto mt-4 w-fit sm:mt-0 sm:mx-0 sm:absolute sm:bottom-0 sm:-right-12 sm:translate-y-2/3 z-10 bg-banner text-white font-mono font-bold uppercase text-sm sm:text-xl px-2.5 py-1 sm:px-3 sm:py-1.5 outline-4 outline-paper"
+      class="banner-tag relative mx-auto mt-4 w-fit sm:mt-0 sm:mx-0 sm:absolute sm:bottom-0 sm:-right-12 sm:translate-y-2/3 z-10 bg-banner text-white font-mono font-bold uppercase text-base sm:text-xl px-3 py-1.5 outline-4 outline-paper"
     >
       {data.rol}
     </div>

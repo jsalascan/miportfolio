@@ -5,7 +5,7 @@ import { url } from "../utils/url"
 
 const {
   title,
-  description = "Portfolio personal de Jose Antonio Salas, Desarrollador de Software y Técnico IT en el sector hotelero. Proyectos, experiencia y formas de contacto.",
+  description = "Portfolio personal de Jose Antonio Salas, Desarrollador de Software y Técnico IT. Proyectos, experiencia y formas de contacto.",
   image = url("og-image.png")
 } = Astro.props
 
@@ -48,15 +48,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
   <body class="bg-paper text-ink font-sans antialiased">
     <slot />
 
-    <!-- Botón volver arriba -->
-    <button
-      id="back-to-top"
-      class="fixed bottom-6 right-6 z-50 inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-mono uppercase bg-paper border-2 border-edge text-ink-soft shadow-sm opacity-0 pointer-events-none transition-all duration-300 hover:border-ink hover:text-ink"
-      aria-label="Volver arriba"
-    >
-      ↑
-    </button>
-
     <script>
       import { initReveal } from "../utils/reveal.js"
       initReveal()
@@ -82,30 +73,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
       initScrollBuddies()
       document.addEventListener("astro:page-load", initScrollBuddies)
-    </script>
-
-    <script>
-      function initBackToTop() {
-        const btn = document.getElementById("back-to-top") as HTMLButtonElement
-        const footer = document.querySelector("footer") as HTMLElement
-
-        window.addEventListener("scroll", () => {
-          const scrolledEnough = window.scrollY > 400
-          const footerVisible = footer
-            ? window.scrollY + window.innerHeight >= footer.offsetTop
-            : false
-
-          const show = scrolledEnough && !footerVisible
-          btn.classList.toggle("opacity-0", !show)
-          btn.classList.toggle("pointer-events-none", !show)
-          btn.classList.toggle("opacity-100", show)
-        })
-
-        btn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" })
-      }
-
-      initBackToTop()
-      document.addEventListener("astro:page-load", initBackToTop)
     </script>
   </body>
 </html>
