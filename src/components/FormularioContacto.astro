@@ -55,7 +55,7 @@ import { ENDPOINT_CONTACTO, TURNSTILE_SITE_KEY } from "../config/contacto"
        cuando Cloudflare pide interacción, que es la minoría de las visitas.
        Ojo con ocultarlo mientras está vacío: Turnstile mide este contenedor al
        renderizar y sobre un `display:none` obtiene 0 px de ancho y falla. -->
-  <div id="turnstile-contacto"></div>
+  <div id="turnstile-contacto" class="max-w-full overflow-hidden"></div>
 
   <!-- `gap-y` mayor que `gap-x`: al envolver en móvil, los enlaces y el botón
        pasan a filas distintas y con el mismo hueco quedaban apelmazados. -->
