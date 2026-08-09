@@ -8,6 +8,14 @@ export const experience = [
     tags: ["Kotlin", "Java", "NFC", "GitHub Actions", "CI/CD"],
   },
   {
+    company: "Nova LS · Autónomo",
+    role: "Desarrollador de Software Freelance",
+    period: "Mar. 2024 - Actualidad",
+    description:
+      "Desarrollo y administración de un servidor de juego multijugador para GTA V sobre la plataforma FiveM. Programación de scripts y recursos personalizados en Lua para distintas mecánicas, y administración de la infraestructura técnica gestionando picos de más de 150 jugadores simultáneos. Desarrollo del panel y la web de administración para la gestión de la comunidad y del servidor, con diseño y mantenimiento de bases de datos e integraciones con servicios externos (Discord, tienda, etc.).",
+    tags: ["JavaScript", "PHP", "Lua", "MariaDB", "Prisma", "Auth.js"],
+  },
+  {
     company: "Formación Profesional Dual · CFGS DAW",
     role: "Desarrollador de Software",
     period: "Mar. 2026 - May. 2026",
