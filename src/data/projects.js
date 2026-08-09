@@ -20,7 +20,7 @@ export const projects = [
     },
     {
       title: "novals-web",
-      description: "Web del servidor NOVA · Los Santos: noticias, postulaciones (whitelist, facción, staff) y panel de staff para revisarlas.",
+      description: "Sitio web para la comunidad de un servidor de juego GTA V basado en FiveM.",
       tags: ["Next.js", "Prisma", "Auth.js · Discord"],
       url: "https://github.com/NOVA-LS/novals-web",
       demo: null,
