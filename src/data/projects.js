@@ -18,6 +18,16 @@ export const projects = [
       image: "projects/vue-rolekit-og.png",
       featured: true,
     },
+    {
+      title: "novals-web",
+      description: "Web del servidor NOVA · Los Santos: noticias, postulaciones (whitelist, facción, staff) y panel de staff para revisarlas.",
+      tags: ["Next.js", "Prisma", "Auth.js · Discord"],
+      url: "https://github.com/NOVA-LS/novals-web",
+      demo: null,
+      image: "projects/novals-web-og.svg",
+      badge: "Nuevo",
+      featured: true,
+    },
     // {
     //   title: "Otro proyecto",
     //   description: "Otra descripción corta.",

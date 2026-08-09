@@ -4,8 +4,11 @@ import ProjectCard from "./ProjectCard.astro"
 import SectionTitle from "./SectionTitle.astro"
 import Monigote from "./Monigote.astro"
 
-// Separamos featured de los demás
+// Separamos featured de los demás. Como mucho un featured lleva el badge
+// "Nuevo": ese se fija arriba a ancho completo, el resto va en su grid.
 const featured = projects.filter(p => p.featured)
+const pinned = featured.find(p => p.badge === "Nuevo")
+const restFeatured = featured.filter(p => p !== pinned)
 const others = projects.filter(p => !p.featured)
 ---
 
@@ -20,9 +23,25 @@ const others = projects.filter(p => !p.featured)
 
     <SectionTitle number="02" label="Proyectos" />
 
+    <!-- Fijado: el proyecto "Nuevo", a ancho completo -->
+    {pinned && (
+      <div class="relative reveal reveal-delay-1 mb-4">
+        <ProjectCard
+          title={pinned.title}
+          description={pinned.description}
+          tags={pinned.tags}
+          url={pinned.url}
+          demo={pinned.demo}
+          image={pinned.image}
+          badge={pinned.badge}
+          pinned={true}
+        />
+      </div>
+    )}
+
     <!-- Proyectos destacados -->
     <div class="grid md:grid-cols-2 gap-4 mb-4">
-      {featured.map((project, i) => (
+      {restFeatured.map((project, i) => (
         <div class={`reveal reveal-delay-${Math.min(i + 1, 4)}`}>
           <ProjectCard
           title={project.title}

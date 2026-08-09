@@ -1,28 +1,51 @@
 ---
 import { url as toUrl } from "../utils/url"
 
-const { title, description, tags, url, demo, image, badge } = Astro.props
+const { title, description, tags, url, demo, image, badge, pinned } = Astro.props
 
 // La tarjeta entera lleva a la demo. Sin demo, al repositorio: hacer clic y no
 // ir a ninguna parte sería peor que llegar al código.
 const destino = demo ?? url
+
+// Píldora sólida por tipo de aviso: verde para lo que sigue vivo, naranja
+// para lo recién llegado. Cualquier badge nuevo que no esté aquí cae en gris.
+const badgeStyles: Record<string, string> = {
+  Actualizado: "bg-ok text-paper",
+  Nuevo: "bg-accent text-paper",
+}
+const badgeClass = badge ? (badgeStyles[badge] ?? "bg-ink-soft text-paper") : ""
+
+// La fijada va en horizontal en escritorio (imagen a un lado, texto al otro)
+// para que "ancho completo" no signifique "el doble de alta".
+const articleClass = pinned
+  ? "group relative bg-paper-2 border-2 border-edge rounded-3xl overflow-hidden hover:border-accent hover:-translate-y-1 transition-all md:flex md:items-stretch"
+  : "group relative h-full bg-paper-2 border-2 border-edge rounded-3xl overflow-hidden hover:border-accent hover:-translate-y-1 transition-all"
+
+const bannerWrapClass = pinned
+  ? "border-b-2 md:border-b-0 md:border-r-2 border-edge overflow-hidden md:w-2/5 md:shrink-0"
+  : "border-b-2 border-edge overflow-hidden"
+
+const bannerImgClass = pinned
+  ? "w-full aspect-[1200/630] md:aspect-auto md:h-full object-cover"
+  : "w-full aspect-[1200/630] object-cover"
+
+const bodyClass = pinned ? "p-6 md:flex-1 md:flex md:flex-col md:justify-center" : "p-6"
 ---
 
-<article class="group relative h-full bg-paper-2 border-2 border-edge rounded-3xl overflow-hidden hover:border-ink hover:-translate-y-1 transition-all">
+<article class={articleClass}>
 
   <!-- Banner -->
   {image && (
-    <div class="border-b-2 border-edge overflow-hidden">
+    <div class={bannerWrapClass}>
       <img
         src={toUrl(image)}
         alt={`Banner de ${title}`}
-        class="w-full aspect-[1200/630] object-cover"
-        loading="lazy"
+        class={bannerImgClass}
       />
     </div>
   )}
 
-  <div class="p-6">
+  <div class={bodyClass}>
 
   <!-- Cabecera -->
   <div class="flex items-start justify-between gap-4 mb-3">
@@ -40,9 +63,9 @@ const destino = demo ?? url
         </a>
       </h3>
 
-      <!-- Mismo lenguaje visual que el RBadge de vue-rolekit -->
+      <!-- Píldora sólida, no el borde hueco del RBadge -->
       {badge && (
-        <span class="inline-flex items-center px-2.5 py-1 font-mono text-[0.7rem] font-bold uppercase tracking-wide leading-none border-2 border-ok text-ok rounded-full">
+        <span class={`inline-flex items-center px-2.5 py-1 font-mono text-[0.7rem] font-bold uppercase tracking-wide leading-none rounded-full ${badgeClass}`}>
           {badge}
         </span>
       )}
