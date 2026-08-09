@@ -248,9 +248,27 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .mono-float, .mono-shadow, .mono-blink, .mono-wave, .mono-swing, .mono-pulse,
   .mono-zzz, .mono-dizzy, .mono-look, .spin-slow, .cursor-blink, .arrow-bob,
-  .is-pulling, .belt-line, .wrench-turn {
+  .is-pulling, .belt-line, .wrench-turn, .skills-track {
     animation: none;
   }
+}
+
+/* Cinta de skills: se repite el contenido x2 y se desliza la mitad exacta,
+   así el bucle no da salto. Se para al pasar el ratón para poder leerla. */
+@keyframes skills-marquee {
+  to { transform: translateX(-50%); }
+}
+
+.skills-track {
+  animation: skills-marquee 34s linear infinite;
+  /* Fuerza su propia capa de composición: sin esto el navegador puede colar
+     el transform continuo en el mismo pase de repintado que el resto de la
+     página y disparar recálculos (lazy-load de imágenes cercanas incluido). */
+  will-change: transform;
+}
+
+.skills-wrap:hover .skills-track {
+  animation-play-state: paused;
 }
 
 /* Banner rotado estilo etiqueta (recto en móvil, rotado desde sm) */

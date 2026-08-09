@@ -3,18 +3,54 @@ import * as simpleIcons from "simple-icons"
 import SectionTitle from "./SectionTitle.astro"
 import Monigote from "./Monigote.astro"
 
-const skills = [
-  { name: "Kotlin",         icon: simpleIcons.siKotlin },
-  { name: "Java",           icon: simpleIcons.siOpenjdk },
-  { name: "Vue",            icon: simpleIcons.siVuedotjs },
-  { name: "Express",        icon: simpleIcons.siExpress },
-  { name: "Node",           icon: simpleIcons.siNodedotjs },
-  { name: "JavaScript",     icon: simpleIcons.siJavascript },
-  { name: "WordPress",      icon: simpleIcons.siWordpress },
-  { name: "MySQL",          icon: simpleIcons.siMysql },
-  { name: "Git",            icon: simpleIcons.siGit },
-  { name: "GitHub Actions", icon: simpleIcons.siGithubactions },
-  { name: "Tailwind",       icon: simpleIcons.siTailwindcss },
+// Tres categorías para el popup con la lista clasificada. Para las dos filas
+// de la cinta, lenguajes + frameworks van arriba y herramientas abajo.
+const skillsLangs = [
+  { name: "JavaScript", icon: simpleIcons.siJavascript },
+  { name: "TypeScript", icon: simpleIcons.siTypescript },
+  { name: "Java",       icon: simpleIcons.siOpenjdk },
+  { name: "Kotlin",     icon: simpleIcons.siKotlin },
+  { name: "PHP",        icon: simpleIcons.siPhp },
+  { name: "Lua",        icon: simpleIcons.siLua },
+]
+
+const skillsFrameworks = [
+  { name: "Next.js",    icon: simpleIcons.siNextdotjs },
+  { name: "Astro",      icon: simpleIcons.siAstro },
+  { name: "Vue",        icon: simpleIcons.siVuedotjs },
+  { name: "Express",    icon: simpleIcons.siExpress },
+  { name: "Node",       icon: simpleIcons.siNodedotjs },
+  { name: "Prisma",     icon: simpleIcons.siPrisma },
+  { name: "Tailwind",   icon: simpleIcons.siTailwindcss },
+  { name: "WordPress",  icon: simpleIcons.siWordpress },
+]
+
+const skillsDeploy = [
+  { name: "GitHub Actions",  icon: simpleIcons.siGithubactions },
+  { name: "Cloudflare",      icon: simpleIcons.siCloudflare },
+  { name: "SQLite",          icon: simpleIcons.siSqlite },
+  { name: "MariaDB",         icon: simpleIcons.siMariadb },
+  { name: "MySQL",           icon: simpleIcons.siMysql },
+  { name: "PostgreSQL",      icon: simpleIcons.siPostgresql },
+]
+
+const skillsTools = [
+  { name: "Git",      icon: simpleIcons.siGit },
+  { name: "npm",      icon: simpleIcons.siNpm },
+  { name: "Jira",     icon: simpleIcons.siJira },
+  { name: "Android",  icon: simpleIcons.siAndroid },
+  { name: "Discord",  icon: simpleIcons.siDiscord },
+  { name: "Telegram", icon: simpleIcons.siTelegram },
+]
+
+const skillsRowTop = [...skillsLangs, ...skillsFrameworks]
+const skillsRowBottom = [...skillsDeploy, ...skillsTools]
+
+const skillGroups = [
+  { label: "Lenguajes",                    items: skillsLangs },
+  { label: "Frameworks y librerías",       items: skillsFrameworks },
+  { label: "Despliegue y bases de datos",  items: skillsDeploy },
+  { label: "Herramientas",                 items: skillsTools },
 ]
 
 const formacion = [
@@ -79,24 +115,61 @@ const idiomas = [
         </p>
       </div>
 
-      <!-- Skills + formación + idiomas -->
-      <div class="reveal reveal-delay-2 space-y-10">
+      <!-- Skills + formación + idiomas. min-w-0: sin esto, el contenido
+           intrínseco ancho de la cinta de skills empuja la columna del grid
+           (y la página entera) más allá del ancho de pantalla en móvil. -->
+      <div class="reveal reveal-delay-2 space-y-10 min-w-0">
 
         <div>
-          <p class="font-mono text-sm uppercase text-ink-soft mb-4">Frameworks, lenguajes y herramientas</p>
-          <div class="flex flex-wrap gap-2">
-            {skills.map((skill) => (
-              <span class="flex items-center gap-2 px-3 py-1.5 text-sm font-bold bg-paper-2 border-2 border-edge text-ink rounded-xl transition-transform hover:-translate-y-1">
-                <svg
-                  role="img"
-                  viewBox="0 0 24 24"
-                  class="w-4 h-4 shrink-0"
-                  style={`fill: #${skill.icon.hex}`}
-                  set:html={skill.icon.svg}
-                />
-                {skill.name}
-              </span>
-            ))}
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <p class="font-mono text-sm uppercase text-ink-soft">Frameworks, lenguajes y herramientas</p>
+            <button
+              id="skills-dialog-open"
+              type="button"
+              class="font-mono text-xs uppercase text-ink-soft hover:text-accent transition-colors underline decoration-dotted underline-offset-4 shrink-0 cursor-pointer"
+            >
+              Ver lista completa
+            </button>
+          </div>
+
+          <div class="skills-wrap relative overflow-hidden min-w-0 mb-2 [mask-image:linear-gradient(to_right,transparent,black_32px,black_calc(100%-32px),transparent)]">
+            <div class="skills-track flex w-max gap-2" style="animation-duration: 46s">
+              {[...skillsRowTop, ...skillsRowTop].map((skill, i) => (
+                <span
+                  aria-hidden={i >= skillsRowTop.length ? "true" : "false"}
+                  class="flex items-center gap-2 px-3 py-1.5 text-sm font-bold bg-paper-2 border-2 border-edge text-ink rounded-xl shrink-0"
+                >
+                  <svg
+                    role="img"
+                    viewBox="0 0 24 24"
+                    class="w-4 h-4 shrink-0"
+                    style={`fill: #${skill.icon.hex}`}
+                    set:html={skill.icon.svg}
+                  />
+                  {skill.name}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div class="skills-wrap relative overflow-hidden min-w-0 [mask-image:linear-gradient(to_right,transparent,black_32px,black_calc(100%-32px),transparent)]">
+            <div class="skills-track flex w-max gap-2" style="animation-duration: 52s">
+              {[...skillsRowBottom, ...skillsRowBottom].map((skill, i) => (
+                <span
+                  aria-hidden={i >= skillsRowBottom.length ? "true" : "false"}
+                  class="flex items-center gap-2 px-3 py-1.5 text-sm font-bold bg-paper-2 border-2 border-edge text-ink rounded-xl shrink-0"
+                >
+                  <svg
+                    role="img"
+                    viewBox="0 0 24 24"
+                    class="w-4 h-4 shrink-0"
+                    style={`fill: #${skill.icon.hex}`}
+                    set:html={skill.icon.svg}
+                  />
+                  {skill.name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -104,14 +177,14 @@ const idiomas = [
           <p class="font-mono text-sm uppercase text-ink-soft mb-4">Formación</p>
           <ul class="space-y-3">
             {formacion.map((item) => (
-              <li class="flex items-baseline justify-between gap-4">
-                <div>
+              <li>
+                <div class="flex items-baseline flex-wrap gap-x-3 gap-y-1">
                   <p class="text-sm font-bold">{item.title}</p>
-                  {item.center && <p class="text-sm text-ink-soft">{item.center}</p>}
+                  {item.period && (
+                    <span class="font-mono text-xs uppercase text-ink-soft shrink-0">{item.period}</span>
+                  )}
                 </div>
-                {item.period && (
-                  <span class="font-mono text-xs uppercase text-ink-soft shrink-0">{item.period}</span>
-                )}
+                {item.center && <p class="text-sm text-ink-soft">{item.center}</p>}
               </li>
             ))}
           </ul>
@@ -133,4 +206,63 @@ const idiomas = [
 
     </div>
   </div>
+
+  <!-- Popup con la lista completa de skills, clasificada -->
+  <dialog
+    id="skills-dialog"
+    class="m-auto max-w-lg w-[calc(100%-2rem)] max-h-[80vh] overflow-y-auto bg-paper-2 border-2 border-edge rounded-3xl p-0 backdrop:bg-ink/50 backdrop:backdrop-blur-sm"
+  >
+    <div class="sticky top-0 flex items-center justify-between gap-4 bg-paper-2 border-b-2 border-edge px-6 py-4">
+      <p class="font-mono text-sm uppercase text-ink-soft">Lista completa</p>
+      <button
+        id="skills-dialog-close"
+        type="button"
+        class="font-mono text-xs uppercase text-ink-soft hover:text-accent transition-colors cursor-pointer"
+      >
+        Cerrar ✕
+      </button>
+    </div>
+    <div class="p-6 space-y-6">
+      {skillGroups.map((group) => (
+        <div>
+          <p class="font-mono text-xs uppercase text-ink-soft mb-3">{group.label}</p>
+          <div class="flex flex-wrap gap-2">
+            {group.items.map((skill) => (
+              <span class="flex items-center gap-2 px-3 py-1.5 text-sm font-bold bg-paper border-2 border-edge text-ink rounded-xl">
+                <svg
+                  role="img"
+                  viewBox="0 0 24 24"
+                  class="w-4 h-4 shrink-0"
+                  style={`fill: #${skill.icon.hex}`}
+                  set:html={skill.icon.svg}
+                />
+                {skill.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </dialog>
+
+  <script>
+    function initSkillsDialog() {
+      const dialog = document.getElementById("skills-dialog") as HTMLDialogElement | null
+      const openBtn = document.getElementById("skills-dialog-open")
+      const closeBtn = document.getElementById("skills-dialog-close")
+      if (!dialog || !openBtn || dialog.dataset.listo === "si") return
+      dialog.dataset.listo = "si"
+
+      openBtn.addEventListener("click", () => dialog.showModal())
+      closeBtn?.addEventListener("click", () => dialog.close())
+
+      // Cerrar al hacer clic en el backdrop (fuera del contenido)
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) dialog.close()
+      })
+    }
+
+    initSkillsDialog()
+    document.addEventListener("astro:page-load", initSkillsDialog)
+  </script>
 </section>
