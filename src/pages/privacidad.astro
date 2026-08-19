@@ -1,0 +1,98 @@
+---
+import Layout from "../layouts/Layout.astro"
+import Navbar from "../components/Navbar.astro"
+import Footer from "../components/Footer.astro"
+import { url } from "../utils/url"
+---
+
+<Layout title="Política de privacidad | Jose Salas">
+  <Navbar />
+  <main class="pt-28 pb-20">
+    <div class="max-w-3xl mx-auto px-6">
+
+      <p class="text-xs font-mono uppercase tracking-wide text-ink-soft/70 mb-2">
+        Última actualización: 19 de agosto de 2026
+      </p>
+      <h1 class="text-3xl font-black tracking-tight mb-8">Política de privacidad</h1>
+
+      <div class="space-y-4 text-ink-soft leading-relaxed">
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Responsable del tratamiento</h2>
+        <p>
+          <strong class="text-ink">Jose Antonio Salas</strong> es responsable
+          de los datos que se tratan a través de este sitio. Puedes
+          contactar para cualquier asunto relacionado con tus datos a través
+          del <a href={url("#contacto")} class="text-ink underline underline-offset-4 hover:text-accent">formulario de contacto</a>.
+        </p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Qué datos tratamos</h2>
+        <p>
+          Únicamente los que escribes voluntariamente en el formulario de
+          contacto: <strong class="text-ink">nombre, email y mensaje</strong>.
+          El sitio no tiene cuentas de usuario, ni guarda ningún dato de tu
+          visita más allá de ese formulario.
+        </p>
+        <p>
+          Al enviarlo, el mensaje viaja mediante un Worker de Cloudflare que
+          lo reenvía directamente a un chat de Telegram que gestiono yo: no
+          queda guardado en ninguna base de datos del sitio. El formulario
+          usa además Cloudflare Turnstile, una verificación anti-bots que
+          trata datos técnicos mínimos (ver más en la{" "}
+          <a href={url("cookies")} class="text-ink underline underline-offset-4 hover:text-accent">política de cookies</a>).
+        </p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Para qué usamos tus datos</h2>
+        <p>Solo para responder al mensaje que envías.</p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Base legal</h2>
+        <p>
+          El consentimiento que das al rellenar y enviar el formulario
+          voluntariamente (art. 6.1.a RGPD).
+        </p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Con quién compartimos tus datos</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>
+            <strong class="text-ink">Cloudflare</strong>, como proveedor
+            técnico del Worker que reenvía el formulario y de Turnstile,
+            sujeto a su propia política de privacidad.
+          </li>
+          <li>
+            <strong class="text-ink">Telegram</strong>, donde recibo el
+            mensaje.
+          </li>
+        </ul>
+        <p>No cedo ni vendo tus datos a terceros con fines publicitarios, ni uso herramientas de analítica en el sitio.</p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Cuánto tiempo conservamos tus datos</h2>
+        <p>
+          El tiempo necesario para responder a tu mensaje. Después puede
+          quedar en el historial del chat de Telegram hasta que lo elimine
+          manualmente.
+        </p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Tus derechos</h2>
+        <p>
+          Puedes ejercer tus derechos de acceso, rectificación, supresión,
+          oposición, limitación y portabilidad escribiendo a través del{" "}
+          <a href={url("#contacto")} class="text-ink underline underline-offset-4 hover:text-accent">formulario de contacto</a>.
+          Si consideras que no he atendido tu solicitud correctamente, puedes
+          reclamar ante la{" "}
+          <a href="https://www.aepd.es" target="_blank" class="text-ink underline underline-offset-4 hover:text-accent">Agencia Española de Protección de Datos</a>.
+        </p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Menores de edad</h2>
+        <p>
+          Este formulario no está pensado para menores de 14 años. Si eres
+          menor de esa edad, necesitas el consentimiento de tu madre, padre o
+          tutor para enviarlo.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-4 mt-12 pt-6 border-t-2 border-edge text-sm font-bold">
+        <a href={url("aviso-legal")} class="text-ink-soft hover:text-accent transition-colors underline underline-offset-4">Aviso legal</a>
+        <a href={url("cookies")} class="text-ink-soft hover:text-accent transition-colors underline underline-offset-4">Cookies</a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

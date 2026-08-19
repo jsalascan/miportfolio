@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro"
+import Navbar from "../components/Navbar.astro"
+import Footer from "../components/Footer.astro"
+import { url } from "../utils/url"
+---
+
+<Layout title="Política de cookies | Jose Salas">
+  <Navbar />
+  <main class="pt-28 pb-20">
+    <div class="max-w-3xl mx-auto px-6">
+
+      <p class="text-xs font-mono uppercase tracking-wide text-ink-soft/70 mb-2">
+        Última actualización: 19 de agosto de 2026
+      </p>
+      <h1 class="text-3xl font-black tracking-tight mb-8">Política de cookies</h1>
+
+      <div class="space-y-4 text-ink-soft leading-relaxed">
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Este sitio no usa cookies propias</h2>
+        <p>
+          Es un sitio estático: no hay cuentas, ni analítica, ni cookies de
+          seguimiento o publicidad.
+        </p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Cloudflare Turnstile</h2>
+        <p>
+          El formulario de contacto usa{" "}
+          <a href="https://www.cloudflare.com/products/turnstile/" target="_blank" class="text-ink underline underline-offset-4 hover:text-accent">Cloudflare Turnstile</a>{" "}
+          para distinguir personas de bots antes de enviar el mensaje. Es una
+          herramienta de terceros que, según la propia documentación de
+          Cloudflare, no usa cookies con fines publicitarios; solo trata
+          datos técnicos mínimos (como tu IP o el comportamiento del
+          navegador) durante el tiempo en que resuelves el formulario. Rige
+          su propia{" "}
+          <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" class="text-ink underline underline-offset-4 hover:text-accent">política de privacidad</a>.
+        </p>
+
+        <h2 class="text-lg font-bold text-ink mt-8 mb-2">Cómo gestionarlas</h2>
+        <p>
+          Puedes bloquear el almacenamiento técnico de Turnstile desde la
+          configuración de tu navegador. Si lo haces, es posible que el
+          formulario de contacto no te deje enviar el mensaje.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-4 mt-12 pt-6 border-t-2 border-edge text-sm font-bold">
+        <a href={url("aviso-legal")} class="text-ink-soft hover:text-accent transition-colors underline underline-offset-4">Aviso legal</a>
+        <a href={url("privacidad")} class="text-ink-soft hover:text-accent transition-colors underline underline-offset-4">Privacidad</a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

@@ -1,5 +1,6 @@
 ---
 import Monigote from "./Monigote.astro"
+import { url } from "../utils/url"
 
 const year = new Date().getFullYear()
 
@@ -16,12 +17,19 @@ const stack = [
     <Monigote variant="sleep" class="w-full" />
   </div>
 
-  <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+  <div class="max-w-5xl mx-auto px-6 flex flex-col items-center gap-4">
 
-    <p class="text-sm text-ink-soft font-mono text-center sm:text-left">
+    <p class="text-sm text-ink-soft font-mono text-center">
       <span class="text-edge">// </span>
       El mejor código es el que aún no sé escribir.<span class="cursor-blink text-accent">▌</span>
     </p>
+
+    <!-- Fila legal aparte: enlaces informativos, no navegación principal. -->
+    <div class="flex flex-wrap justify-center gap-4 text-xs text-ink-soft/70">
+      <a href={url("aviso-legal")} class="hover:text-accent transition-colors">Aviso legal</a>
+      <a href={url("privacidad")} class="hover:text-accent transition-colors">Privacidad</a>
+      <a href={url("cookies")} class="hover:text-accent transition-colors">Cookies</a>
+    </div>
 
     <p class="text-xs text-ink-soft/70 flex items-center gap-1.5">
       <span>© {year} Jose Salas · Hecho con</span>
