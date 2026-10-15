@@ -1,0 +1,77 @@
+---
+import Layout from "../layouts/Layout.astro"
+import CabeceraSimple from "../components/CabeceraSimple.astro"
+import Footer from "../components/Footer.astro"
+import { url } from "../utils/url"
+---
+
+<Layout title="Aviso legal | Jose Salas">
+  <CabeceraSimple />
+  <main class="pt-10 pb-16">
+    <div class="max-w-3xl mx-auto px-6">
+
+      <p class="font-mono text-xs text-muted mb-2">
+        Última actualización: 19 de agosto de 2026
+      </p>
+      <h1 class="text-[1.75rem] leading-tight font-semibold mb-8">Aviso legal</h1>
+
+      <div class="space-y-4 max-w-[65ch]">
+        <h2 class="rotulo mt-10 mb-2">Identificación</h2>
+        <p>
+          Este sitio (jsalascan.github.io/miportfolio) es el portfolio
+          personal de <strong class="font-semibold">Jose Antonio Salas</strong>.
+          Para cualquier consulta relacionada con este aviso legal, la
+          privacidad o el contenido del sitio, escribe a través del{" "}
+          <a href={url("#contacto")} class="enlace">formulario de contacto</a>.
+        </p>
+
+        <h2 class="rotulo mt-10 mb-2">Objeto</h2>
+        <p>
+          El sitio presenta un perfil profesional: información sobre mí,
+          proyectos, experiencia y un formulario para contactar.
+          No ofrece productos ni servicios de pago.
+        </p>
+
+        <h2 class="rotulo mt-10 mb-2">Condiciones de uso</h2>
+        <p>
+          El acceso al sitio es libre. Al usar el formulario de contacto te
+          comprometes a facilitar datos reales y a no usarlo con fines
+          distintos de contactar conmigo (spam, pruebas automatizadas, etc.).
+        </p>
+
+        <h2 class="rotulo mt-10 mb-2">Propiedad intelectual</h2>
+        <p>
+          El diseño, los textos y el código propio de este sitio son de Jose
+          Antonio Salas. El sitio está construido con{" "}
+          <a href="https://astro.build" target="_blank" class="enlace">Astro</a>
+          {" "}y{" "}
+          <a href="https://tailwindcss.com" target="_blank" class="enlace">Tailwind</a>,
+          bajo sus propias licencias de código abierto. Los proyectos que se
+          muestran pertenecen a sus respectivos contextos (empresa, cliente o
+          proyecto personal) y se describen únicamente con fines informativos.
+        </p>
+
+        <h2 class="rotulo mt-10 mb-2">Responsabilidad</h2>
+        <p>
+          Se procura mantener el sitio disponible y con información correcta,
+          pero no se garantiza la ausencia de interrupciones o errores. No me
+          hago responsable del contenido de los sitios enlazados (LinkedIn,
+          GitHub, proyectos de terceros).
+        </p>
+
+        <h2 class="rotulo mt-10 mb-2">Legislación aplicable</h2>
+        <p>
+          Este aviso legal se rige por la legislación española. Para
+          cualquier controversia derivada del uso del sitio, y salvo que la
+          normativa de protección de personas consumidoras disponga otra
+          cosa, las partes se someten a los juzgados y tribunales que
+          correspondan conforme a derecho.
+        </p>
+      </div>
+
+    </div>
+  </main>
+  <div class="max-w-3xl mx-auto px-6">
+    <Footer />
+  </div>
+</Layout>

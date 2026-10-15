@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#121212"/>
+  <text x="96" y="290" font-family="'Public Sans'" font-weight="600" font-size="96" fill="#e6e6e3">Jose Salas</text>
+  <text x="100" y="360" font-family="IBM Plex Mono" font-size="34" fill="#9a9a96">Desarrollador de software · Arona, Tenerife</text>
+  <line x1="100" y1="460" x2="1100" y2="460" stroke="#2a2a2a" stroke-width="2"/>
+  <text x="100" y="525" font-family="IBM Plex Mono" font-size="28" fill="#8fb0ff">jsalascan.github.io/miportfolio</text>
+</svg>

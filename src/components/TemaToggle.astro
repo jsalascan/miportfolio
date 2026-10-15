@@ -1,0 +1,38 @@
+<button type="button" data-tema-toggle class="text-muted hover:text-fg cursor-pointer">
+  tema: auto
+</button>
+
+<script>
+  // auto → claro → oscuro → auto. «auto» no guarda nada y deja que mande el sistema.
+  const ORDEN = ["auto", "claro", "oscuro"] as const
+  type Tema = (typeof ORDEN)[number]
+
+  function temaActual(): Tema {
+    const tema = document.documentElement.dataset.tema
+    return tema === "claro" || tema === "oscuro" ? tema : "auto"
+  }
+
+  function initTema() {
+    const boton = document.querySelector<HTMLButtonElement>("[data-tema-toggle]")
+    if (!boton) return
+
+    boton.textContent = `tema: ${temaActual()}`
+
+    // `onclick` y no addEventListener: ClientRouter vuelve a ejecutar este
+    // script en cada navegación y así no se acumulan manejadores.
+    boton.onclick = () => {
+      const siguiente = ORDEN[(ORDEN.indexOf(temaActual()) + 1) % ORDEN.length]
+      try {
+        if (siguiente === "auto") localStorage.removeItem("tema")
+        else localStorage.setItem("tema", siguiente)
+      } catch {}
+
+      if (siguiente === "auto") delete document.documentElement.dataset.tema
+      else document.documentElement.dataset.tema = siguiente
+
+      boton.textContent = `tema: ${siguiente}`
+    }
+  }
+
+  document.addEventListener("astro:page-load", initTema)
+</script>

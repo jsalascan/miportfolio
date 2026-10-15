@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro"
+import CabeceraSimple from "../components/CabeceraSimple.astro"
+import Footer from "../components/Footer.astro"
+import { url } from "../utils/url"
+---
+
+<Layout title="Página no encontrada · Jose Salas">
+  <CabeceraSimple />
+  <main class="mx-auto max-w-3xl px-6 py-16">
+    <p class="font-mono text-sm text-muted mb-2">404</p>
+    <h1 class="text-[1.75rem] leading-tight font-semibold mb-4">Página no encontrada</h1>
+    <p class="max-w-[65ch] mb-6">La dirección no existe o ha cambiado.</p>
+    <a href={url("")} class="enlace">Volver al inicio</a>
+  </main>
+  <div class="mx-auto max-w-3xl px-6">
+    <Footer />
+  </div>
+</Layout>

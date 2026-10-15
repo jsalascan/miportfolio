@@ -1,0 +1,51 @@
+---
+import Layout from "../layouts/Layout.astro"
+import CabeceraSimple from "../components/CabeceraSimple.astro"
+import Footer from "../components/Footer.astro"
+import { url } from "../utils/url"
+---
+
+<Layout title="Política de cookies | Jose Salas">
+  <CabeceraSimple />
+  <main class="pt-10 pb-16">
+    <div class="max-w-3xl mx-auto px-6">
+
+      <p class="font-mono text-xs text-muted mb-2">
+        Última actualización: 19 de agosto de 2026
+      </p>
+      <h1 class="text-[1.75rem] leading-tight font-semibold mb-8">Política de cookies</h1>
+
+      <div class="space-y-4 max-w-[65ch]">
+        <h2 class="rotulo mt-10 mb-2">Este sitio no usa cookies propias</h2>
+        <p>
+          Es un sitio estático: no hay cuentas, ni analítica, ni cookies de
+          seguimiento o publicidad.
+        </p>
+
+        <h2 class="rotulo mt-10 mb-2">Cloudflare Turnstile</h2>
+        <p>
+          El formulario de contacto usa{" "}
+          <a href="https://www.cloudflare.com/products/turnstile/" target="_blank" class="enlace">Cloudflare Turnstile</a>{" "}
+          para distinguir personas de bots antes de enviar el mensaje. Es una
+          herramienta de terceros que, según la propia documentación de
+          Cloudflare, no usa cookies con fines publicitarios; solo trata
+          datos técnicos mínimos (como tu IP o el comportamiento del
+          navegador) durante el tiempo en que resuelves el formulario. Rige
+          su propia{" "}
+          <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" class="enlace">política de privacidad</a>.
+        </p>
+
+        <h2 class="rotulo mt-10 mb-2">Cómo gestionarlas</h2>
+        <p>
+          Puedes bloquear el almacenamiento técnico de Turnstile desde la
+          configuración de tu navegador. Si lo haces, es posible que el
+          formulario de contacto no te deje enviar el mensaje.
+        </p>
+      </div>
+
+    </div>
+  </main>
+  <div class="max-w-3xl mx-auto px-6">
+    <Footer />
+  </div>
+</Layout>

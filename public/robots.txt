@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jsalascan.github.io/miportfolio/sitemap-index.xml

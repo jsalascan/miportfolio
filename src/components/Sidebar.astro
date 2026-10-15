@@ -1,0 +1,100 @@
+---
+import { url } from "../utils/url"
+
+const secciones = [
+  { id: "sobre-mi", label: "Sobre mí" },
+  { id: "experiencia", label: "Experiencia" },
+  { id: "proyectos", label: "Proyectos" },
+  { id: "contacto", label: "Contacto" },
+]
+
+const enlaces = [
+  { href: "https://github.com/jsalascan", label: "GitHub ↗" },
+  { href: "https://www.linkedin.com/in/jsalascan/", label: "LinkedIn ↗" },
+]
+---
+
+<header class="pt-10 pb-6 border-b border-rule lg:border-b-0 lg:sticky lg:top-0 lg:h-screen lg:py-16 flex flex-col gap-6 lg:gap-10">
+  <div>
+    <h1 class="text-[1.75rem] leading-tight font-semibold">
+      <a href={url("")} class="hover:text-link transition-colors">Jose Salas</a>
+    </h1>
+    <p class="mt-1">Desarrollador de software</p>
+    <p class="font-mono text-sm text-muted">Arona, Tenerife</p>
+  </div>
+
+  <nav aria-label="Índice">
+    <ul class="flex flex-wrap lg:flex-col gap-x-5 gap-y-1 font-mono text-sm">
+      {secciones.map((s) => (
+        <li>
+          <a href={url(`#${s.id}`)} data-indice-link={s.id} class="indice-link text-muted hover:text-fg">
+            {s.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <ul class="flex flex-wrap lg:flex-col gap-x-5 gap-y-1 text-sm lg:mt-auto">
+    {enlaces.map((e) => (
+      <li class="min-w-0">
+        <a href={e.href} target="_blank" rel="noopener" class="enlace">{e.label}</a>
+      </li>
+    ))}
+  </ul>
+</header>
+
+<script>
+  // Marca en el índice la última sección cuyo borde superior ha pasado el 30%
+  // de la pantalla. Al llegar al final se marca la última: Contacto es corta y
+  // nunca alcanzaría esa línea por sí sola.
+  let abortar: AbortController | undefined
+
+  function initIndice() {
+    abortar?.abort()
+
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-indice-link]"))
+    const secciones = links
+      .map((a) => document.getElementById(a.dataset.indiceLink ?? ""))
+      .filter((s): s is HTMLElement => s !== null)
+    if (secciones.length === 0) return
+
+    abortar = new AbortController()
+
+    function marcar() {
+      const linea = window.innerHeight * 0.3
+      const alFinal = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2
+
+      let activa = secciones[0]
+      for (const s of secciones) {
+        if (s.getBoundingClientRect().top <= linea) activa = s
+      }
+      if (alFinal) activa = secciones[secciones.length - 1]
+
+      for (const a of links) {
+        if (a.dataset.indiceLink === activa.id) a.setAttribute("aria-current", "true")
+        else a.removeAttribute("aria-current")
+      }
+    }
+
+    let pendiente = false
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (pendiente) return
+        pendiente = true
+        requestAnimationFrame(() => {
+          pendiente = false
+          marcar()
+        })
+      },
+      { passive: true, signal: abortar.signal },
+    )
+    window.addEventListener("resize", marcar, { passive: true, signal: abortar.signal })
+
+    marcar()
+  }
+
+  // Con ClientRouter, `astro:page-load` también salta en la carga inicial.
+  document.addEventListener("astro:page-load", initIndice)
+</script>

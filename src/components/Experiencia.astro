@@ -1,0 +1,29 @@
+---
+import { experience } from "../data/experience"
+import Seccion from "./Seccion.astro"
+---
+
+<Seccion id="experiencia" titulo="Experiencia">
+  <ol class="space-y-10">
+    {experience.map((item) => (
+      <li data-empresa={item.company} class="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1">
+        <p class="font-mono text-sm text-muted sm:pt-0.5">{item.period}</p>
+        <div class="min-w-0">
+          <h3 class="font-semibold">{item.company}</h3>
+          <!-- Con varios puestos, una línea a la izquierda los une como en
+               LinkedIn y cada uno lleva sus fechas. -->
+          <ol class={item.roles.length > 1 ? "mt-2 space-y-6 border-l border-rule pl-4" : undefined}>
+            {item.roles.map((r) => (
+              <li data-puesto>
+                <p class="text-muted">{r.role}</p>
+                {item.roles.length > 1 && <p class="font-mono text-sm text-muted">{r.period}</p>}
+                <p class="mt-2 max-w-[65ch]">{r.description}</p>
+                <p class="mt-2 font-mono text-sm text-muted">{r.tags.join(" · ")}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </li>
+    ))}
+  </ol>
+</Seccion>

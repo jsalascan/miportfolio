@@ -1,0 +1,40 @@
+---
+import { projects } from "../data/projects"
+import Seccion from "./Seccion.astro"
+import { url } from "../utils/url"
+---
+
+<Seccion id="proyectos" titulo="Proyectos">
+  <p class="max-w-[65ch] mb-8">Todo el código es público en GitHub.</p>
+
+  <ul class="space-y-10">
+    {projects.map((p) => (
+      <li
+        data-proyecto={p.title}
+        class={p.image ? "grid sm:grid-cols-[160px_1fr] gap-x-6 gap-y-3" : undefined}
+      >
+        {p.image && (
+          <a href={p.demo ?? p.url} target="_blank" rel="noopener" class="block self-start">
+            <img
+              src={url(p.image)}
+              alt={`Captura de ${p.title}`}
+              width="640"
+              height="400"
+              loading="lazy"
+              class="w-full aspect-[8/5] object-cover object-top border border-rule rounded-[2px]"
+            />
+          </a>
+        )}
+        <div class="min-w-0">
+          <h3 class="font-semibold">{p.title}</h3>
+          <p class="mt-1 max-w-[65ch]">{p.description}</p>
+          <p class="mt-2 font-mono text-sm text-muted">{p.tags.join(" · ")}</p>
+          <p class="mt-2 flex gap-4 font-mono text-sm">
+            <a href={p.url} target="_blank" rel="noopener" class="enlace">código ↗</a>
+            {p.demo && <a href={p.demo} target="_blank" rel="noopener" class="enlace">demo ↗</a>}
+          </p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</Seccion>

@@ -1,0 +1,67 @@
+---
+import Seccion from "./Seccion.astro"
+
+const stack = [
+  { grupo: "Lenguajes", items: ["JavaScript", "TypeScript", "Java", "Kotlin", "PHP"] },
+  { grupo: "Frameworks", items: ["Astro", "Vue", "Express", "Node", "Prisma", "Tailwind", "WordPress"] },
+  { grupo: "Datos y despliegue", items: ["GitHub Actions", "SQLite", "MariaDB", "MySQL", "PostgreSQL"] },
+  { grupo: "Herramientas", items: ["Git", "npm", "Jira"] },
+]
+
+const formacion = [
+  { title: "Grado en Ingeniería Informática", center: "Universitat Oberta de Catalunya", period: "en curso" },
+  { title: "CFGS Desarrollo de Aplicaciones Web", center: "IES Las Galletas", period: "2024 – 2026" },
+  { title: "CFGM Sistemas Microinformáticos y Redes", center: "IES Las Galletas", period: "2022 – 2024" },
+]
+
+const idiomas = "Español (nativo), inglés (profesional básico)"
+---
+
+<Seccion id="sobre-mi" titulo="Sobre mí">
+  <!-- Texto escrito por el usuario: se mantiene tal cual. -->
+  <div class="space-y-4 max-w-[65ch]">
+    <p>
+      Cuento con experiencia real en el sector hotelero, habiendo colaborado
+      con dos cadenas relevantes en Canarias:{" "}
+      <strong class="font-semibold">Spring Hotels Group</strong>{" "}y{" "}
+      <strong class="font-semibold">Bahía Príncipe Hotels &amp; Resorts</strong>.
+    </p>
+    <p>
+      Mi trayectoria combina el desarrollo de aplicaciones web y móviles con
+      el soporte técnico en entornos de alta exigencia operativa, donde la
+      continuidad del servicio y la experiencia del usuario son prioritarias.
+    </p>
+    <p>
+      Me interesa especialmente contribuir a la digitalización de procesos,
+      un ámbito donde la tecnología tiene un impacto directo en
+      el negocio y en las personas que lo viven cada día. Mi
+      objetivo es seguir creciendo como profesional IT en un entorno donde
+      pueda aportar valor real desde el primer momento.
+    </p>
+  </div>
+
+  <dl class="mt-10 grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 sm:gap-y-4">
+    {stack.map((g) => (
+      <>
+        <dt class="font-mono text-sm text-muted sm:pt-0.5">{g.grupo}</dt>
+        <dd class="mb-4 sm:mb-0">{g.items.join(", ")}</dd>
+      </>
+    ))}
+
+    <dt class="font-mono text-sm text-muted sm:pt-0.5">Formación</dt>
+    <dd class="mb-4 sm:mb-0">
+      <ul class="space-y-2">
+        {formacion.map((f) => (
+          <li>
+            {f.title}
+            <span class="text-muted"> · {f.center}</span>
+            <span class="font-mono text-sm text-muted"> · {f.period}</span>
+          </li>
+        ))}
+      </ul>
+    </dd>
+
+    <dt class="font-mono text-sm text-muted sm:pt-0.5">Idiomas</dt>
+    <dd>{idiomas}</dd>
+  </dl>
+</Seccion>
